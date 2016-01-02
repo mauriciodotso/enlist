@@ -9,13 +9,17 @@ class SessionDAO(object):
         pass
 
     @abc.abstractmethod
-    def insert(self, meal):
+    def insert(self, session):
         pass
 
     @abc.abstractmethod
-    def update(self, meal):
+    def update(self, session):
         pass
 
     @abc.abstractmethod
     def remove(self, id):
+        pass
+
+    @abc.abstractmethod
+    def remove_all(self, query):
         pass
