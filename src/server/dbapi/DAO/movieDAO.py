@@ -13,11 +13,11 @@ class MovieDAO(object):
         pass
 
     @abc.abstractmethod
-    def insert(self, meal):
+    def insert(self, movie):
         pass
 
     @abc.abstractmethod
-    def update(self, meal):
+    def update(self, movie):
         pass
 
     @abc.abstractmethod
