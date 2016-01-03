@@ -14,8 +14,8 @@ class MovieMongo(MovieDAO):
 
     def get_all(self, limit=10, offset=0):
         try:
-            cursor = self.meals.find().sort('name', pymongo.DESCENDING).limit(limit).skip(offset*limit)
-            total = self.meals.find().count()
+            cursor = self.movies.find().sort('name', pymongo.DESCENDING).limit(limit).skip(offset*limit)
+            total = self.movies.find().count()
             result = []
             
             for movie in cursor:
