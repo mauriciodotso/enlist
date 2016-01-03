@@ -13,11 +13,11 @@ class BookDAO(object):
         pass
 
     @abc.abstractmethod
-    def insert(self, meal):
+    def insert(self, book):
         pass
 
     @abc.abstractmethod
-    def update(self, meal):
+    def update(self, book):
         pass
 
     @abc.abstractmethod
