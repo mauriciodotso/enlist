@@ -1,32 +1,13 @@
 from ..DAO/userDAO import UserDAO
-import pymongo
+from baseMongo import BaseMongo
 
 
-class UserMongo(UserDAO):
+class UserMongo(BaseMongo, UserDAO):
     def __init__(self, database):
-            self.users = database.users
+        super(UserMongo, self).__init__(database)
 
-    def get(self, id):
-        try:
-            return self.users.find_one({'_id': id})
-        except Exception
-            raise Exception
+    def get_all_movies(self, limit=10, offset=0):
+        pass
 
-    def insert(self, user):
-        try:
-            return self.users.insert_one(user)
-        except Exception
-            raise Exception
-
-    def update(self, user):
-        try:
-            return self.users.update({'_id': user['_id']}, {'$set': user})
-        except Exception
-            raise Exception
-
-    def remove(self, id):
-        try:
-            return self.users.remove({'_id': id})
-        except Exception
-            raise Exception
-
+    def get_all_books(self, limit=10, offset=0):
+        pass

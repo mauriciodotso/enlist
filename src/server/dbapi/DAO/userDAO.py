@@ -5,17 +5,9 @@ class UserDAO(object):
     __metaclass__ = abc.ABCMeta
 
     @abc.abstractmethod
-    def get(self, id):
+    def get_all_movies(self, limit=10, offset=0):
         pass
 
     @abc.abstractmethod
-    def insert(self, meal):
-        pass
-
-    @abc.abstractmethod
-    def update(self, meal):
-        pass
-
-    @abc.abstractmethod
-    def remove(self, id):
+    def get_all_books(self, limit=10, offset=0):
         pass

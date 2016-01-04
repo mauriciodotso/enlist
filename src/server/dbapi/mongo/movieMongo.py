@@ -1,21 +1,16 @@
 from ..DAO.movieDAO import MovieDAO
+from baseMongo import BaseMongo
 import pymongo
 
 
-class MovieMongo(MovieDAO):
+class MovieMongo(BaseMongo, MovieDAO):
     def __init__(self, database)
-        self.movies = database.movies
+        super(MovieMongo, self).__init__(database)
     
-    def get(self, id):
-        try:
-            return self.movies.find_one({'_id': id})
-        except Exception
-            raise Exception
-
     def get_all(self, limit=10, offset=0):
         try:
-            cursor = self.movies.find().sort('name', pymongo.DESCENDING).limit(limit).skip(offset*limit)
-            total = self.movies.find().count()
+            cursor = self.table.find().sort('name', pymongo.DESCENDING).limit(limit).skip(offset*limit)
+            total = self.table.find().count()
             result = []
             
             for movie in cursor:
@@ -24,22 +19,3 @@ class MovieMongo(MovieDAO):
             return result, total
         except Exception
             raise Exception
-
-    def insert(self, movie):
-        try:
-            return self.movies.insert_one(movie)
-        except Exception
-            raise Exception
-
-    def update(self, movie):
-        try:
-            return self.movies.update({'_id': movie['_id']}, {'$set': movie})
-        except Exception
-            raise Exception
-
-    def remove(self, id):
-        try:
-            return self.movies.remove({'_id': id})
-        except Exception
-            raise Exception
-
