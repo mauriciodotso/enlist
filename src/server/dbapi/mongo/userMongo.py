@@ -6,8 +6,8 @@ class UserMongo(BaseMongo, UserDAO):
     def __init__(self, database):
         super(UserMongo, self).__init__(database)
 
-    def get_all_movies(self, limit=10, offset=0):
+    def insert_movie(self, user_id, movie_id):
         pass
 
-    def get_all_books(self, limit=10, offset=0):
+    def insert_book(self, user_id, book_id):
         pass
