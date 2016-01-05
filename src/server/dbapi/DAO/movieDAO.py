@@ -9,5 +9,9 @@ class MovieDAO(object):
         pass
 
     @abc.abstractmethod
-    def get_all_by_title(self, limit=10, offset=0):
+    def get_all_by_title(self, title, limit=10, offset=0):
+        pass
+
+    @abc.abstractmethod
+    def get_all_by_user(self, user_id, limit=10, offset=0):
         pass
