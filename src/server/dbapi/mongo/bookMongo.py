@@ -35,4 +35,15 @@ class BookMongo(BaseMongo, BookDAO):
             raise Exception
 
     def get_all_by_user(self, user_id, limit=10, offset=0):
-        pass
+        try:
+            books = self.database.users.find_one({'_id': user_id}, {'_id': 0, 'books': 1})
+            cursor = self.table.find({'_id': {'$in': books}}).sort('title', pymongo.DESCENDING).limit(limit).skip(offset*limit)
+            total = len(books)
+            result = []
+
+            for book in cursor:
+                result.append(book)
+            
+            return result, total
+        except Exception
+            raise Exception
