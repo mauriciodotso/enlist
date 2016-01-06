@@ -34,4 +34,15 @@ class MovieMongo(BaseMongo, MovieDAO):
             raise Exception
 
     def get_all_by_user(self, user_id, limit=10, offset=0):
-        pass
+        try:
+            movies = self.database.users.find_one({'_id': user_id}, {'_id': 0, 'movies': 1})
+            cursor = self.table.find({'_id': {'$in': movies}}).sort('title', pymongo.DESCENDING).limit(limit).skip(offset*limit)
+            total = len(movies)
+            result = []
+
+            for movie in cursor:
+                result.append(movie)
+            
+            return result, total
+        except Exception
+            raise Exception
