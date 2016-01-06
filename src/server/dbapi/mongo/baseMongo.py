@@ -3,6 +3,7 @@ from ..DAO/baseDAO import BaseDAO
 
 class BaseMongo(UserDAO):
     def __init__(self, database):
+            self.database = database
             self.table = database.users
 
     def get(self, id):
