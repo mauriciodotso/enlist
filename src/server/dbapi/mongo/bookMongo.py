@@ -18,7 +18,7 @@ class BookMongo(BaseMongo, BookDAO):
                 result.append(movie)
 
             return result, total
-        except Exception
+        except Exception:
             raise Exception
 
     def get_all_by_title(self, title, limit=10, offset=0):
@@ -31,7 +31,7 @@ class BookMongo(BaseMongo, BookDAO):
                 result.append(movie)
 
             return result, total
-        except Exception
+        except Exception:
             raise Exception
 
     def get_all_by_user(self, user_id, limit=10, offset=0):
@@ -45,5 +45,5 @@ class BookMongo(BaseMongo, BookDAO):
                 result.append(book)
             
             return result, total
-        except Exception
+        except Exception:
             raise Exception
