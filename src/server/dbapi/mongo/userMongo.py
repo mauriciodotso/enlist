@@ -20,12 +20,12 @@ class UserMongo(BaseMongo, UserDAO):
 
     def get_movies(self, user_id):
         try:
-            return self.table.find({'_id': user_id}, {'movies':  1, '_id': 0}})
+            return self.table.find({'_id': user_id}, {'movies':  1, '_id': 0})
         except Exception:
             raise Exception
 
     def get_books(self, user_id):
         try:
-            return self.table.find({'_id': user_id}, {'books':  1, '_id': 0}})
+            return self.table.find({'_id': user_id}, {'books':  1, '_id': 0})
         except Exception:
             raise Exception
