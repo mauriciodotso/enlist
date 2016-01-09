@@ -20,7 +20,7 @@ class BaseMongo(BaseDAO):
 
     def update(self, row):
         try:
-            return self.table.update({'_id': row['_id']}, {'$set': row})
+            return self.table.update_one({'_id': row['_id']}, {'$set': row})
         except Exception:
             raise Exception
 
