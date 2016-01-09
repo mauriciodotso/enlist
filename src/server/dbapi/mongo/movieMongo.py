@@ -5,7 +5,7 @@ import pymongo
 
 class MovieMongo(BaseMongo, MovieDAO):
     def __init__(self, database):
-        super(MovieMongo, self).__init__(database)
+        super(MovieMongo, self).__init__(database, database.movies)
     
     def get_all(self, limit=10, offset=0):
         try:

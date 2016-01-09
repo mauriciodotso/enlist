@@ -4,7 +4,7 @@ from baseMongo import BaseMongo
 
 class SessionMongo(BaseMongo, SessionDAO):
     def __init__(self, database):
-        super(SessionMongo, self).__init__(database)
+        super(SessionMongo, self).__init__(database, database.sessions)
 
     def remove_all(self, query):
         try:

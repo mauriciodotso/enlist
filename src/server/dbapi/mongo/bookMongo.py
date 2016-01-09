@@ -6,7 +6,7 @@ import pymongo
 
 class BookMongo(BaseMongo, BookDAO):
     def __init__(self, database):
-            super(BookMongo, self).__init__(database)
+            super(BookMongo, self).__init__(database, database.books)
 
     def get_all(self, limit=10, offset=0):
         try:

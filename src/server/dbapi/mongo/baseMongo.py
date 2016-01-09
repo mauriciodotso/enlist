@@ -2,9 +2,9 @@ from ..DAO.baseDAO import BaseDAO
 
 
 class BaseMongo(BaseDAO):
-    def __init__(self, database):
+    def __init__(self, database, table):
             self.database = database
-            self.table = database.users
+            self.table = table
 
     def get(self, id):
         try:

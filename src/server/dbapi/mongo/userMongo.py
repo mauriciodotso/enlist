@@ -4,7 +4,7 @@ from baseMongo import BaseMongo
 
 class UserMongo(BaseMongo, UserDAO):
     def __init__(self, database):
-        super(UserMongo, self).__init__(database)
+        super(UserMongo, self).__init__(database, database.users)
 
     def insert_movie(self, user_id, movie_id):
         try:
