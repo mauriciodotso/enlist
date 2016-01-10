@@ -13,9 +13,9 @@ class BookMongo(BaseMongo, BookDAO):
             cursor = self.table.find().sort('title', pymongo.DESCENDING).limit(limit).skip(offset*limit)
             total = self.table.find().count()
             result = []
-            
+
             for book in cursor:
-                result.append(movie)
+                result.append(book)
 
             return result, total
         except Exception:
