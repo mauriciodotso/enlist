@@ -14,18 +14,18 @@ class UserMongo(BaseMongo, UserDAO):
 
     def insert_book(self, user_id, book_id):
         try:
-            return self.table.update({'_id': user_id}, {'$addToSet': {'books': movie_id}})
+            return self.table.update({'_id': user_id}, {'$addToSet': {'books': book_id}})
         except Exception:
             raise Exception
 
     def get_movies(self, user_id):
         try:
-            return self.table.find({'_id': user_id}, {'movies':  1, '_id': 0})
+            return self.table.find_one({'_id': user_id}, {'movies':  1, '_id': 0})['movies']
         except Exception:
             raise Exception
 
     def get_books(self, user_id):
         try:
-            return self.table.find({'_id': user_id}, {'books':  1, '_id': 0})
+            return self.table.find_one({'_id': user_id}, {'books':  1, '_id': 0})['books']
         except Exception:
             raise Exception
