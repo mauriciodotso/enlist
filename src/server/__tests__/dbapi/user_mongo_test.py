@@ -11,8 +11,8 @@ connection = pymongo.MongoClient("mongodb://localhost")
 database = connection.enlist_test
 dbapi = DBAPI(database=database)
 
-books = range(0, 50, 2) 
-movies = range(1, 51, 2)
+books = [{'_id': x, 'status': 0} for x in range(0, 50, 2)]
+movies = [{'_id': x, 'status': 0} for x in range(1, 51, 2)]
 user = {'username': "Test", 'password': "123456789", 'movies': movies, 'books': books}
 user_id = 0
 
@@ -45,6 +45,18 @@ class UserMongoTest(unittest.TestCase):
         dbapi.users.insert_book(user_id, 52)
         books = database.users.find_one({'_id': user_id}, {'books':  1, '_id': 0})['books']
         self.assertEqual(len(books), 26)
+
+    def test_update_movie(self):
+        movie_id = 49
+        dbapi.users.update_movie(user_id, movie_id, 1)
+        status = database.users.find_one({'_id': user_id, 'movies': {'$elemMatch': {'_id': movie_id}}}, {'movies.$.status':  1, '_id': 0})['movies'][0]['status']
+        self.assertEqual(status, 1)
+
+    def test_update_book(self):
+        book_id = 42
+        dbapi.users.update_book(user_id, book_id, 1)
+        status = database.users.find_one({'_id': user_id, 'books': {'$elemMatch': {'_id': book_id}}}, {'books.$.status': 1, '_id': 0})['books'][0]['status']
+        self.assertEqual(status, 1)
         
     def test_get_movies(self):
         movies = dbapi.users.get_movies(user_id)
@@ -52,7 +64,7 @@ class UserMongoTest(unittest.TestCase):
         self.assertEqual(len(movies), 25)
 
         for movie in movies:
-            self.assertEqual(movie%2, 1)
+            self.assertEqual(movie['_id']%2, 1)
 
     def test_get_books(self):
         books = dbapi.users.get_books(user_id)
@@ -60,7 +72,7 @@ class UserMongoTest(unittest.TestCase):
         self.assertEqual(len(books), 25)
 
         for book in books:
-            self.assertEqual(book%2, 0)
+            self.assertEqual(book['_id']%2, 0)
 
 if __name__ == '__main__':
     unittest.main()
