@@ -6,15 +6,27 @@ class UserMongo(BaseMongo, UserDAO):
     def __init__(self, database):
         super(UserMongo, self).__init__(database, database.users)
 
-    def insert_movie(self, user_id, movie_id):
+    def insert_movie(self, user_id, movie_id, status=0):
         try:
-            return self.table.update({'_id': user_id}, {'$addToSet': {'movies': movie_id}})
+            return self.table.update({'_id': user_id}, {'$addToSet': {'movies': {'_id': movie_id, 'status': status}}})
         except Exception:
             raise Exception
 
-    def insert_book(self, user_id, book_id):
+    def insert_book(self, user_id, book_id, status=0):
         try:
-            return self.table.update({'_id': user_id}, {'$addToSet': {'books': book_id}})
+            return self.table.update({'_id': user_id}, {'$addToSet': {'books': {'_id': book_id, 'status': status}}})
+        except Exception:
+            raise Exception
+
+    def update_movie(self, user_id, movie_id, status):
+        try:
+            return self.table.update({'_id': user_id, 'movies._id': movie_id}, {'$set': {'status': status}})
+        except Exception:
+            raise Exception
+
+    def update_book(self, user_id, book_id, status):
+        try:
+            return self.table.update({'_id': user_id, 'books._id': book_id}, {'$set': {'status': status}})
         except Exception:
             raise Exception
 
