@@ -20,13 +20,13 @@ class UserMongo(BaseMongo, UserDAO):
 
     def update_movie(self, user_id, movie_id, status):
         try:
-            return self.table.update({'_id': user_id, 'movies._id': movie_id}, {'$set': {'status': status}})
+            return self.table.update({'_id': user_id, 'movies._id': movie_id}, {'$set': {'movies.$.status': status}})
         except Exception:
             raise Exception
 
     def update_book(self, user_id, book_id, status):
         try:
-            return self.table.update({'_id': user_id, 'books._id': book_id}, {'$set': {'status': status}})
+            return self.table.update({'_id': user_id, 'books._id': book_id}, {'$set': {'books.$.status': status}})
         except Exception:
             raise Exception
 
