@@ -13,6 +13,14 @@ class UserDAO(object):
         pass
 
     @abc.abstractmethod
+    def update_movie(self, user_id, movie_idi, status):
+        pass
+
+    @abc.abstractmethod
+    def update_book(self, user_id, book_id, status):
+        pass
+
+    @abc.abstractmethod
     def get_movies(self, user_id):
         pass
 
