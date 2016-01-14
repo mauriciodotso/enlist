@@ -1,5 +1,6 @@
 language: python
+python: "2.7.10"
 install: "pip install -r src/server/requirements.txt"
 script:
-        - cd src/server/__test__
+        - cd src/server/__tests___
         - ./run_tests.sh
