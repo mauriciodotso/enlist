@@ -51,16 +51,99 @@ def crossdomain(origin=None, methods=None, headers=None,
 ###########
 #Login API#
 ###########
+def make_salt():
+    salt = ""
+    for i in range(5):
+        salt = salt + random.choice(string.ascii_letters)
+    return salt
+
+def make_pw_hash(pw,salt=None):
+    if salt == None:
+        salt = make_salt();
+    return hashlib.sha256(pw + salt).hexdigest()+","+ salt
+
+def valid_user(username, password):
+    user = dbapi.users.get(username)
+
+    if not user:
+        return False
+    
+    salt = user['password'].split(',')[1]
+    
+    return user['password'] == make_pw_hash(password, salt)
+
+def generate_token(n):
+    token = ""
+    
+    for i in range(n):
+        token += random.choice(string.ascii_letters)
+
+    return token
+
 @app.route("/login", methods=['POST', 'OPTIONS'])
-@crossdomain(origin='http://locahost:3000')
+@crossdomain(origin=url)
 def login():
-	pass
+        """Login.
+
+        Method:
+            POST
+        
+        Args:
+            username (str): User's username
+            password (str): User's password
+
+        Returns:
+            200: If user's was successfully logged in.
+            str: A cookies is set with the token value.
+                
+        Raises:
+            400: If the login failed.
+            404: If a invalide user os password is passed
+            500: Internal server problem.
+        """
+        try:
+            if valid_user(request.json['username'], request.json['password']):
+                token = generate_token(128)
+
+                try:
+                    dbapi.sessions.insert({'_id': token, 'username': request.json['username']})
+                    user = dbapi.users.get(request.json['username'])
+                except Exception:
+                    return jsonify(message="We had a problem processing your request! Try again later."), 500
+        
+
+                return jsonify(token=token, message="Success!", role=user['role'], goal=user['goal']), 200
+            else:
+                return jsonify(message="Invalid Login!"), 404
+        except Exception:
+            return jsonify(message="Error! Maybe missing args."), 400
+        
+        return response
 
 @app.route("/logout", methods=['POST', 'OPTIONS'])
-@crossdomain(origin='http://locahost:3000')
+@crossdomain(origin=url)
 def logout():
-	pass
+        """Logout.
 
+        Method:
+            POST
+        
+        Args:
+            token (str): User's token
+
+        Returns:
+            200: If user is successfully logged out.
+                
+        Raises:
+            400: If the logout failed.
+            500: Internal server problem.
+        """
+        try:
+            dbapi.sessions.remove(request.json['token'])
+        except Exception:
+            return jsonify(message="We had a problem processing your request! Try again later."), 500
+        
+        return jsonify(message="Success!"), 200
 
 ##########
 #User API#
