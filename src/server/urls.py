@@ -48,6 +48,11 @@ def crossdomain(origin=None, methods=None, headers=None,
         return update_wrapper(wrapped_function, f)
     return decorator
 
+def has_permission(token, user_id):
+    session = dbapi.sessions.get(request.json['token']) 
+
+    return session['user_id'] == user_id
+
 ###########
 #Login API#
 ###########
@@ -151,51 +156,172 @@ def logout():
 @app.route("/user/create", methods=['POST', 'OPTIONS'])
 @crossdomain(origin='http://locahost:3000')
 def user_create():
-	pass
+	"""Creates a user.
+        
+        Method:
+            POST
+
+        Args:
+            username(str): User's username
+            password(str): User's password
+            
+        Returns:
+            201: If user is created 
+
+        Raises:
+            400: If can't create user
+            409: If the username already exists
+        """ 
+        try:
+            user_search = dbapi.users.get(request.json['username'])
+
+            if user_search:
+                    return jsonify(message="User already exists!"), 409
+
+            password = make_pw_hash(request.json['password'])
+
+            user = {'_id': request.json['username'], 'password': password, 'movies': [], 'books': []}
+
+            try:
+                dbapi.users.insert(user)
+            except Exception:
+                return jsonify("We had a problem processing your request! Try again later."), 500
+            
+            return  jsonify(message="Success! User created."), 201
+        except Exception:
+            return jsonify(message="Error! Maybe missing args."), 400
 
 @app.route("/user/get", methods=['POST', 'OPTIONS'])
 @crossdomain(origin='http://locahost:3000')
 def user_get():
-	pass
+        """Get specified user info.
+
+        Method:
+            POST
+        
+        Args:
+            username (int): User's username
+            token (str): User's session token
+
+        Returns:
+            json: Returns a json containing the user's information
+                {
+                    'username': 
+                }
+        Raises:
+            403: If a invalid token is passed, or no token is passed, or invalid permission.
+            404: If the specified Id does not exist.
+        """
+        pass
 
 @app.route("/user/update", methods=['POST', 'OPTIONS'])
 @crossdomain(origin='http://locahost:3000')
 def user_update():
-	pass
+        """Update specified user info.
+
+        Method:
+            POST
+        
+        Args:
+            username (str): User's username
+            token (str): User's session token
+            password(Option[str]): User's updated password
+
+        Returns:
+            200: If User's info were updated
+
+        Raises:
+            403: If a invalid token is passed, or no token is passed, or invalid permission.
+            404: If the specified Id does not exist.
+            400: If the user was not updated.
+        """
+        try:
+            user = dbapi.users.get(request.json['username'])
+           
+            if not has_permission(request.json['token'], request.json['username']):
+                return jsonify(message="Access Denied"), 403
+            
+            if not user:
+                return jsonify(message="Couldn't find the specified user!"), 404
+
+            if 'password' in request.json:
+                    user['password'] = make_pw_hash(request.json['password'])
+
+            try:
+                dbapi.users.update(user)
+            except Exception:
+                return jsonify(message="We had a problem processing your request! Try again later."), 500
+            
+            return  jsonify(message="Success! User updated."), 200
+        except Exception:
+            return jsonify(message="Error! Maybe missing args."), 400
 
 @app.route("/user/delete", methods=['POST', 'OPTIONS'])
 @crossdomain(origin='http://locahost:3000')
 def user_delete():
-	pass
+        """Delete specified user.
+
+        Method:
+            POST
+        
+        Args:
+            username (str): User's username
+            token (str): User's session token
+
+        Returns:
+            200: If the user was deleted
+
+        Raises:
+            403: If a invalid token is passed, or no token is passed or invalid permission.
+            404: If the specified Id does not exist.
+        """
+        try:
+            user = dbapi.users.get(request.json['_id'])
+
+            if not has_permission(request.json['token'], request.json['username']):
+                return jsonify(message="Access Denied"), 403
+            
+            if not user:
+                return jsonify(message="Couldn't find the specified Id"), 404
+           
+            try:
+                dbapi.users.remove(user['_id'])
+                dbapi.sessions.remove_all({'username': user['username']})
+            except Exception:
+                return jsonify(message="We had a problem processing your request! Try again later."), 500
+            
+            return  jsonify(message="Success! User removed."), 200
+        except Exception:
+            return jsonify(message="Error! Maybe missing args."), 400
 
 @app.route("/user/addbook", methods=['POST', 'OPTIONS'])
 @crossdomain(origin='http://locahost:3000')
-def user_delete():
+def user_add_book():
 	pass
 
 @app.route("/user/deletebook", methods=['POST', 'OPTIONS'])
 @crossdomain(origin='http://locahost:3000')
-def user_delete():
+def user_delete_book():
 	pass
 
 @app.route("/user/updatebook", methods=['POST', 'OPTIONS'])
 @crossdomain(origin='http://locahost:3000')
-def user_delete():
+def user_update_book():
 	pass
 
 @app.route("/user/addmovie", methods=['POST', 'OPTIONS'])
 @crossdomain(origin='http://locahost:3000')
-def user_delete():
+def user_add_movie():
 	pass
 
 @app.route("/user/deletemovie", methods=['POST', 'OPTIONS'])
 @crossdomain(origin='http://locahost:3000')
-def user_delete():
+def user_delete_movie():
 	pass
 
 @app.route("/user/updatemovie", methods=['POST', 'OPTIONS'])
 @crossdomain(origin='http://locahost:3000')
-def user_delete():
+def user_update_movie():
 	pass
 
 ##########
