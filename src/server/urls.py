@@ -108,67 +108,66 @@ def generate_token(n):
 @app.route("/login", methods=['POST', 'OPTIONS'])
 @crossdomain(origin=url)
 def login():
-        """Login.
+    """Login.
 
-        Method:
-            POST
+    Method:
+        POST
         
-        Args:
-            username (str): User's username
-            password (str): User's password
+    Args:
+        username (str): User's username
+        password (str): User's password
 
-        Returns:
-            200: If user's was successfully logged in.
-            str: A cookies is set with the token value.
+    Returns:
+        200: If user's was successfully logged in.
+        str: A cookies is set with the token value.
                 
-        Raises:
-            400: If the login failed.
-            404: If a invalide user os password is passed
-            500: Internal server problem.
-        """
-        try:
-            if valid_user(request.json['username'], request.json['password']):
-                token = generate_token(128)
+    Raises:
+        400: If the login failed.
+        404: If a invalide user os password is passed
+        500: Internal server problem.
+    """
+    try:
+        if valid_user(request.json['username'], request.json['password']):
+            token = generate_token(128)
 
-                try:
-                    dbapi.sessions.insert({'_id': token, 'username': request.json['username']})
-                    user = dbapi.users.get(request.json['username'])
-                except Exception:
-                    return jsonify(message="We had a problem processing your request! Try again later."), 500
-        
+            try:
+                dbapi.sessions.insert({'_id': token, 'username': request.json['username']})
+                user = dbapi.users.get(request.json['username'])
+            except Exception:
+                return jsonify(message="We had a problem processing your request! Try again later."), 500
 
-                return jsonify(token=token, message="Success!"), 200
-            else:
-                return jsonify(message="Invalid Login!"), 404
-        except Exception:
-            return jsonify(message="Error! Maybe missing args."), 400
+            return jsonify(token=token, message="Success!"), 200
+        else:
+            return jsonify(message="Invalid Login!"), 404
+    except Exception:
+        return jsonify(message="Error! Maybe missing args."), 400
         
-        return response
+    return response
 
 @app.route("/logout", methods=['POST', 'OPTIONS'])
 @crossdomain(origin=url)
 def logout():
-        """Logout.
+    """Logout.
 
-        Method:
-            POST
+    Method:
+        POST
         
-        Args:
-            token (str): User's token
+    Args:
+        token (str): User's token
 
-        Returns:
-            200: If user is successfully logged out.
+    Returns:
+        200: If user is successfully logged out.
                 
-        Raises:
-            400: If the logout failed.
-            500: Internal server problem.
-        """
-        try:
-            dbapi.sessions.remove(request.json['token'])
-        except Exception:
-            return jsonify(message="We had a problem processing your request! Try again later."), 500
+    Raises:
+        400: If the logout failed.
+        500: Internal server problem.
+    """
+    try:
+        dbapi.sessions.remove(request.json['token'])
+    except Exception:
+        return jsonify(message="We had a problem processing your request! Try again later."), 500
         
-        return jsonify(message="Success!"), 200
+    return jsonify(message="Success!"), 200
 
 ##########
 #User API#
@@ -176,173 +175,173 @@ def logout():
 @app.route("/user/create", methods=['POST', 'OPTIONS'])
 @crossdomain(origin='http://locahost:3000')
 def user_create():
-	"""Creates a user.
+    """Creates a user.
         
-        Method:
-            POST
+     Method:
+        POST
 
-        Args:
-            username(str): User's username
-            password(str): User's password
+    Args:
+        username(str): User's username
+        password(str): User's password
             
-        Returns:
-            201: If user is created 
+    Returns:
+        201: If user is created 
 
-        Raises:
-            400: If can't create user
-            409: If the username already exists
-        """ 
+    Raises:
+        400: If can't create user
+        409: If the username already exists
+    """ 
+    try:
+        user_search = dbapi.users.get(request.json['username'])
+
+        if user_search:
+            return jsonify(message="User already exists!"), 409
+
+        password = make_pw_hash(request.json['password'])
+
+        user = {'_id': request.json['username'], 'password': password, 'movies': [], 'books': []}
+
         try:
-            user_search = dbapi.users.get(request.json['username'])
-
-            if user_search:
-                    return jsonify(message="User already exists!"), 409
-
-            password = make_pw_hash(request.json['password'])
-
-            user = {'_id': request.json['username'], 'password': password, 'movies': [], 'books': []}
-
-            try:
-                dbapi.users.insert(user)
-            except Exception:
-                return jsonify("We had a problem processing your request! Try again later."), 500
-            
-            return  jsonify(message="Success! User created."), 201
+            dbapi.users.insert(user)
         except Exception:
-            return jsonify(message="Error! Maybe missing args."), 400
+            return jsonify("We had a problem processing your request! Try again later."), 500
+            
+        return  jsonify(message="Success! User created."), 201
+    except Exception:
+        return jsonify(message="Error! Maybe missing args."), 400
 
 @app.route("/user/get", methods=['POST', 'OPTIONS'])
 @crossdomain(origin=url)
 def user_get():
-        """Get specified user info.
+    """Get specified user info.
 
-        Method:
-            POST
+    Method:
+        POST
         
-        Args:
-            username (int): User's username
-            token (str): User's session token
+    Args:
+        username (int): User's username
+        token (str): User's session token
 
-        Returns:
-            json: Returns a json containing the user's information
-                {
-                    'username': 
-                }
-        Raises:
-            403: If a invalid token is passed, or no token is passed, or invalid permission.
-            404: If the specified Id does not exist.
-        """
-        pass
+    Returns:
+        json: Returns a json containing the user's information
+            {
+                'username': 
+            }
+    Raises:
+        403: If a invalid token is passed, or no token is passed, or invalid permission.
+        404: If the specified Id does not exist.
+    """
+    pass
 
 @app.route("/user/update", methods=['POST', 'OPTIONS'])
 @crossdomain(origin=url)
 def user_update():
-        """Update specified user info.
+    """Update specified user info.
 
-        Method:
-            POST
+    Method:
+        POST
         
-        Args:
-            username (str): User's username
-            token (str): User's session token
-            password(Option[str]): User's updated password
+    Args:
+        username (str): User's username
+        token (str): User's session token
+        password(Option[str]): User's updated password
 
-        Returns:
-            200: If User's info were updated
+    Returns:
+        200: If User's info were updated
 
-        Raises:
-            403: If a invalid token is passed, or no token is passed, or invalid permission.
-            404: If the specified Id does not exist.
-            400: If the user was not updated.
+    Raises:
+        403: If a invalid token is passed, or no token is passed, or invalid permission.
+        404: If the specified Id does not exist.
+        400: If the user was not updated.
         """
-        try:
-            user = dbapi.users.get(request.json['username'])
+    try:
+        user = dbapi.users.get(request.json['username'])
            
-            if not has_permission(request.json['token'], request.json['username']):
-                return jsonify(message="Access Denied"), 403
+        if not has_permission(request.json['token'], request.json['username']):
+            return jsonify(message="Access Denied"), 403
             
-            if not user:
-                return jsonify(message="Couldn't find the specified user!"), 404
+        if not user:
+            return jsonify(message="Couldn't find the specified user!"), 404
 
-            if 'password' in request.json:
-                    user['password'] = make_pw_hash(request.json['password'])
+        if 'password' in request.json:
+            user['password'] = make_pw_hash(request.json['password'])
 
-            try:
-                dbapi.users.update(user)
-            except Exception:
-                return jsonify(message="We had a problem processing your request! Try again later."), 500
-            
-            return  jsonify(message="Success! User updated."), 200
+        try:
+            dbapi.users.update(user)
         except Exception:
-            return jsonify(message="Error! Maybe missing args."), 400
+            return jsonify(message="We had a problem processing your request! Try again later."), 500
+            
+        return  jsonify(message="Success! User updated."), 200
+    except Exception:
+        return jsonify(message="Error! Maybe missing args."), 400
 
 @app.route("/user/delete", methods=['POST', 'OPTIONS'])
 @crossdomain(origin=url)
 def user_delete():
-        """Delete specified user.
+    """Delete specified user.
 
-        Method:
-            POST
+    Method:
+        POST
         
-        Args:
-            username (str): User's username
-            token (str): User's session token
+    Args:
+        username (str): User's username
+        token (str): User's session token
 
-        Returns:
-            200: If the user was deleted
+    Returns:
+        200: If the user was deleted
 
-        Raises:
-            403: If a invalid token is passed, or no token is passed or invalid permission.
-            404: If the specified Id does not exist.
-        """
-        try:
-            user = dbapi.users.get(request.json['_id'])
+    Raises:
+        403: If a invalid token is passed, or no token is passed or invalid permission.
+        404: If the specified Id does not exist.
+    """
+    try:
+        user = dbapi.users.get(request.json['_id'])
 
-            if not has_permission(request.json['token'], request.json['username']):
-                return jsonify(message="Access Denied"), 403
+        if not has_permission(request.json['token'], request.json['username']):
+            return jsonify(message="Access Denied"), 403
             
-            if not user:
-                return jsonify(message="Couldn't find the specified Id"), 404
+        if not user:
+            return jsonify(message="Couldn't find the specified Id"), 404
            
-            try:
-                dbapi.users.remove(user['_id'])
-                dbapi.sessions.remove_all({'username': user['username']})
-            except Exception:
-                return jsonify(message="We had a problem processing your request! Try again later."), 500
-            
-            return  jsonify(message="Success! User removed."), 200
+        try:
+            dbapi.users.remove(user['_id'])
+            dbapi.sessions.remove_all({'username': user['username']})
         except Exception:
-            return jsonify(message="Error! Maybe missing args."), 400
+            return jsonify(message="We had a problem processing your request! Try again later."), 500
+            
+        return  jsonify(message="Success! User removed."), 200
+    except Exception:
+        return jsonify(message="Error! Maybe missing args."), 400
 
 @app.route("/user/addbook", methods=['POST', 'OPTIONS'])
 @crossdomain(origin=url)
 def user_add_book():
-	pass
+    pass
 
 @app.route("/user/deletebook", methods=['POST', 'OPTIONS'])
 @crossdomain(origin=url)
 def user_delete_book():
-	pass
+    pass
 
 @app.route("/user/updatebook", methods=['POST', 'OPTIONS'])
 @crossdomain(origin=url)
 def user_update_book():
-	pass
+    pass
 
 @app.route("/user/addmovie", methods=['POST', 'OPTIONS'])
 @crossdomain(origin=url)
 def user_add_movie():
-	pass
+    pass
 
 @app.route("/user/deletemovie", methods=['POST', 'OPTIONS'])
 @crossdomain(origin=url)
 def user_delete_movie():
-	pass
+    pass
 
 @app.route("/user/updatemovie", methods=['POST', 'OPTIONS'])
 @crossdomain(origin=url)
 def user_update_movie():
-	pass
+    pass
 
 ##########
 #Book API#
@@ -350,27 +349,27 @@ def user_update_movie():
 @app.route("/book/create", methods=['POST', 'OPTIONS'])
 @crossdomain(origin=url)
 def book_create():
-	pass
+    pass
 
 @app.route("/book/get", methods=['POST', 'OPTIONS'])
 @crossdomain(origin=url)
 def book_get():
-	pass
+    pass
 
 @app.route("/book/update", methods=['POST', 'OPTIONS'])
 @crossdomain(origin=url)
 def book_update():
-	pass
+    pass
 
 @app.route("/book/delete", methods=['POST', 'OPTIONS'])
 @crossdomain(origin=url)
 def book_delete():
-	pass
+    pass
 
 @app.route("/book/search", methods=['POST', 'OPTIONS'])
 @crossdomain(origin=url)
 def book_all():
-	pass
+    pass
 
 ###########
 #Movie API#
@@ -378,27 +377,27 @@ def book_all():
 @app.route("/movie/create", methods=['POST', 'OPTIONS'])
 @crossdomain(origin=url)
 def movie_create():
-	pass
+    pass
 
 @app.route("/movie/get", methods=['POST', 'OPTIONS'])
 @crossdomain(origin=url)
 def movie_get():
-	pass
+    pass
 
 @app.route("/movie/update", methods=['POST', 'OPTIONS'])
 @crossdomain(origin=url)
 def movie_update():
-	pass
+    pass
 
 @app.route("/movie/delete", methods=['POST', 'OPTIONS'])
 @crossdomain(origin=url)
 def movie_delete():
-	pass
+    pass
 
 @app.route("/movie/search", methods=['POST', 'OPTIONS'])
 @crossdomain(origin=url)
 def movie_all():
-	pass
+    pass
 
 if __name__ == "__main__":
     app.run()
