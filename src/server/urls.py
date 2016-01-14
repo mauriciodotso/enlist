@@ -1,6 +1,26 @@
-from flask import Flask
+from flask import Flask, request, Response, make_response, request, current_app, jsonify
+from functools import update_wrapper
+from datetime import timedelta
+from dbapi.api import DBAPI
+from bson.objectid import ObjectId
+import random
+import string
+import datetime
+import json
+import hmac
+import hashlib
+
 app = Flask(__name__)
 
+url = "*"
+dbapi = DBAPI()
+
+######
+#Test#
+######
+def test_database(database):
+    global dbapi
+    dbapi = DBAPI(database=database)
 
 #######################
 #Crossdomain decorator#
@@ -80,7 +100,7 @@ def valid_user(username, password):
 def generate_token(n):
     token = ""
     
-    for i in range(n):
+    for i in xrange(n):
         token += random.choice(string.ascii_letters)
 
     return token
@@ -117,7 +137,7 @@ def login():
                     return jsonify(message="We had a problem processing your request! Try again later."), 500
         
 
-                return jsonify(token=token, message="Success!", role=user['role'], goal=user['goal']), 200
+                return jsonify(token=token, message="Success!"), 200
             else:
                 return jsonify(message="Invalid Login!"), 404
         except Exception:
@@ -192,7 +212,7 @@ def user_create():
             return jsonify(message="Error! Maybe missing args."), 400
 
 @app.route("/user/get", methods=['POST', 'OPTIONS'])
-@crossdomain(origin='http://locahost:3000')
+@crossdomain(origin=url)
 def user_get():
         """Get specified user info.
 
@@ -215,7 +235,7 @@ def user_get():
         pass
 
 @app.route("/user/update", methods=['POST', 'OPTIONS'])
-@crossdomain(origin='http://locahost:3000')
+@crossdomain(origin=url)
 def user_update():
         """Update specified user info.
 
@@ -257,7 +277,7 @@ def user_update():
             return jsonify(message="Error! Maybe missing args."), 400
 
 @app.route("/user/delete", methods=['POST', 'OPTIONS'])
-@crossdomain(origin='http://locahost:3000')
+@crossdomain(origin=url)
 def user_delete():
         """Delete specified user.
 
@@ -295,32 +315,32 @@ def user_delete():
             return jsonify(message="Error! Maybe missing args."), 400
 
 @app.route("/user/addbook", methods=['POST', 'OPTIONS'])
-@crossdomain(origin='http://locahost:3000')
+@crossdomain(origin=url)
 def user_add_book():
 	pass
 
 @app.route("/user/deletebook", methods=['POST', 'OPTIONS'])
-@crossdomain(origin='http://locahost:3000')
+@crossdomain(origin=url)
 def user_delete_book():
 	pass
 
 @app.route("/user/updatebook", methods=['POST', 'OPTIONS'])
-@crossdomain(origin='http://locahost:3000')
+@crossdomain(origin=url)
 def user_update_book():
 	pass
 
 @app.route("/user/addmovie", methods=['POST', 'OPTIONS'])
-@crossdomain(origin='http://locahost:3000')
+@crossdomain(origin=url)
 def user_add_movie():
 	pass
 
 @app.route("/user/deletemovie", methods=['POST', 'OPTIONS'])
-@crossdomain(origin='http://locahost:3000')
+@crossdomain(origin=url)
 def user_delete_movie():
 	pass
 
 @app.route("/user/updatemovie", methods=['POST', 'OPTIONS'])
-@crossdomain(origin='http://locahost:3000')
+@crossdomain(origin=url)
 def user_update_movie():
 	pass
 
@@ -328,27 +348,27 @@ def user_update_movie():
 #Book API#
 ##########
 @app.route("/book/create", methods=['POST', 'OPTIONS'])
-@crossdomain(origin='http://locahost:3000')
+@crossdomain(origin=url)
 def book_create():
 	pass
 
 @app.route("/book/get", methods=['POST', 'OPTIONS'])
-@crossdomain(origin='http://locahost:3000')
+@crossdomain(origin=url)
 def book_get():
 	pass
 
 @app.route("/book/update", methods=['POST', 'OPTIONS'])
-@crossdomain(origin='http://locahost:3000')
+@crossdomain(origin=url)
 def book_update():
 	pass
 
 @app.route("/book/delete", methods=['POST', 'OPTIONS'])
-@crossdomain(origin='http://locahost:3000')
+@crossdomain(origin=url)
 def book_delete():
 	pass
 
 @app.route("/book/search", methods=['POST', 'OPTIONS'])
-@crossdomain(origin='http://locahost:3000')
+@crossdomain(origin=url)
 def book_all():
 	pass
 
@@ -356,28 +376,28 @@ def book_all():
 #Movie API#
 ###########
 @app.route("/movie/create", methods=['POST', 'OPTIONS'])
-@crossdomain(origin='http://locahost:3000')
-def book_create():
+@crossdomain(origin=url)
+def movie_create():
 	pass
 
 @app.route("/movie/get", methods=['POST', 'OPTIONS'])
-@crossdomain(origin='http://locahost:3000')
-def book_get():
+@crossdomain(origin=url)
+def movie_get():
 	pass
 
 @app.route("/movie/update", methods=['POST', 'OPTIONS'])
-@crossdomain(origin='http://locahost:3000')
-def book_update():
+@crossdomain(origin=url)
+def movie_update():
 	pass
 
 @app.route("/movie/delete", methods=['POST', 'OPTIONS'])
-@crossdomain(origin='http://locahost:3000')
-def book_delete():
+@crossdomain(origin=url)
+def movie_delete():
 	pass
 
 @app.route("/movie/search", methods=['POST', 'OPTIONS'])
-@crossdomain(origin='http://locahost:3000')
-def book_all():
+@crossdomain(origin=url)
+def movie_all():
 	pass
 
 if __name__ == "__main__":
