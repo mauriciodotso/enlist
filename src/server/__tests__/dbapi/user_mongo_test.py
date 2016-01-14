@@ -13,7 +13,7 @@ dbapi = DBAPI(database=database)
 
 books = [{'_id': x, 'status': 0} for x in range(0, 50, 2)]
 movies = [{'_id': x, 'status': 0} for x in range(1, 51, 2)]
-user = {'username': "Test", 'password': "123456789", 'movies': movies, 'books': books}
+user = {'_id': "Test", 'password': "123456789", 'movies': movies, 'books': books}
 user_id = 0
 
 

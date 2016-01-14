@@ -27,7 +27,7 @@ def clean_database():
 class MovieMongoTest(unittest.TestCase):
     def setUp(self):
         global user_id
-        user_id = database.users.insert({'username': "testUser", 'password': '123456789', 'movies': [], 'books': []})
+        user_id = database.users.insert({'_id': "testUser", 'password': '123456789', 'movies': [], 'books': []})
         year = 1975
 
         for i in xrange(total):
