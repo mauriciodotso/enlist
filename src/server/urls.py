@@ -69,7 +69,7 @@ def crossdomain(origin=None, methods=None, headers=None,
     return decorator
 
 def has_permission(token, user_id):
-    session = dbapi.sessions.get(request.json['token']) 
+    session = dbapi.sessions.get(request.json['token'])
 
     return session['user_id'] == user_id
 
@@ -92,14 +92,14 @@ def valid_user(username, password):
 
     if not user:
         return False
-    
+
     salt = user['password'].split(',')[1]
-    
+
     return user['password'] == make_pw_hash(password, salt)
 
 def generate_token(n):
     token = ""
-    
+
     for i in xrange(n):
         token += random.choice(string.ascii_letters)
 
@@ -112,7 +112,7 @@ def login():
 
     Method:
         POST
-        
+
     Args:
         username (str): User's username
         password (str): User's password
@@ -120,7 +120,7 @@ def login():
     Returns:
         200: If user's was successfully logged in.
         str: A cookies is set with the token value.
-                
+
     Raises:
         400: If the login failed.
         404: If a invalide user os password is passed
@@ -141,7 +141,7 @@ def login():
             return jsonify(message="Invalid Login!"), 404
     except Exception:
         return jsonify(message="Error! Maybe missing args."), 400
-        
+
     return response
 
 @app.route("/logout", methods=['POST', 'OPTIONS'])
@@ -151,13 +151,13 @@ def logout():
 
     Method:
         POST
-        
+
     Args:
         token (str): User's token
 
     Returns:
         200: If user is successfully logged out.
-                
+
     Raises:
         400: If the logout failed.
         500: Internal server problem.
@@ -166,7 +166,7 @@ def logout():
         dbapi.sessions.remove(request.json['token'])
     except Exception:
         return jsonify(message="We had a problem processing your request! Try again later."), 500
-        
+
     return jsonify(message="Success!"), 200
 
 ##########
@@ -176,21 +176,21 @@ def logout():
 @crossdomain(origin='http://locahost:3000')
 def user_create():
     """Creates a user.
-        
+
      Method:
         POST
 
     Args:
         username(str): User's username
         password(str): User's password
-            
+
     Returns:
-        201: If user is created 
+        201: If user is created
 
     Raises:
         400: If can't create user
         409: If the username already exists
-    """ 
+    """
     try:
         user_search = dbapi.users.get(request.json['username'])
 
@@ -205,7 +205,7 @@ def user_create():
             dbapi.users.insert(user)
         except Exception:
             return jsonify("We had a problem processing your request! Try again later."), 500
-            
+
         return  jsonify(message="Success! User created."), 201
     except Exception:
         return jsonify(message="Error! Maybe missing args."), 400
@@ -217,7 +217,7 @@ def user_get():
 
     Method:
         POST
-        
+
     Args:
         username (int): User's username
         token (str): User's session token
@@ -225,7 +225,7 @@ def user_get():
     Returns:
         json: Returns a json containing the user's information
             {
-                'username': 
+                'username':
             }
     Raises:
         403: If a invalid token is passed, or no token is passed, or invalid permission.
@@ -240,7 +240,7 @@ def user_update():
 
     Method:
         POST
-        
+
     Args:
         username (str): User's username
         token (str): User's session token
@@ -256,10 +256,10 @@ def user_update():
         """
     try:
         user = dbapi.users.get(request.json['username'])
-           
+
         if not has_permission(request.json['token'], request.json['username']):
             return jsonify(message="Access Denied"), 403
-            
+
         if not user:
             return jsonify(message="Couldn't find the specified user!"), 404
 
@@ -270,7 +270,7 @@ def user_update():
             dbapi.users.update(user)
         except Exception:
             return jsonify(message="We had a problem processing your request! Try again later."), 500
-            
+
         return  jsonify(message="Success! User updated."), 200
     except Exception:
         return jsonify(message="Error! Maybe missing args."), 400
@@ -282,7 +282,7 @@ def user_delete():
 
     Method:
         POST
-        
+
     Args:
         username (str): User's username
         token (str): User's session token
@@ -299,16 +299,16 @@ def user_delete():
 
         if not has_permission(request.json['token'], request.json['username']):
             return jsonify(message="Access Denied"), 403
-            
+
         if not user:
             return jsonify(message="Couldn't find the specified Id"), 404
-           
+
         try:
             dbapi.users.remove(user['_id'])
             dbapi.sessions.remove_all({'username': user['username']})
         except Exception:
             return jsonify(message="We had a problem processing your request! Try again later."), 500
-            
+
         return  jsonify(message="Success! User removed."), 200
     except Exception:
         return jsonify(message="Error! Maybe missing args."), 400
@@ -349,27 +349,179 @@ def user_update_movie():
 @app.route("/book/create", methods=['POST', 'OPTIONS'])
 @crossdomain(origin=url)
 def book_create():
-    pass
+    """Creates a book.
+
+    Method:
+        POST
+
+    Args:
+        token(str): User's token
+        title(str): Book's title
+        year(date): Book's year
+        edition(int): Book's edition
+        cover(str): Book's cover url addres
+
+    Returns:
+        id(str): Created book Id
+        201: If book is created
+
+    Raises:
+        403: If a invalid token is passed, or no token is passed, or invalid permission.
+        400: If can't create book
+    """
+    try:
+        if not has_permission(request.json['token'], 'Admin'):
+            return jsonify(message="Access Denied"), 403
+
+        #ToDo: Check if title and edition already exists.
+
+        book = {'title': request.json['title'], 'year': request.json['year'], 'edition': request.json['edition'], 'cover': request.json['cover']}
+
+        try:
+            _id = dbapi.books.insert(book).inserted_id
+        except Exception:
+            return jsonify(message="We had a problem processing your request! Try again later."), 500
+
+        return  jsonify(message="Success! Book created.", _id=str(_id)), 201
+    except Exception:
+        return "Error! Maybe missing args.", 400
 
 @app.route("/book/get", methods=['POST', 'OPTIONS'])
 @crossdomain(origin=url)
 def book_get():
-    pass
+    """Returns a book according to the passed id.
+
+    Method:
+        POST
+
+    Args:
+        id(str): Book's id
+
+    Returns:
+        Book(json): Return's a json object containing the book information.
+        200: If book exists
+
+    Raises:
+        404: If no Book is found
+    """
+    try:
+        try:
+            book = dbapi.books.get(request.json['id'])
+
+            if not book:
+                return jsonify(message="Couldn't find the specified book!"), 404
+        except Exception:
+            return jsonify(message="We had a problem processing your request! Try again later."), 500
+
+        return  jsonify(message="Success! Book found.", book=book), 201
+    except Exception:
+        return "Error! Maybe missing args.", 400
 
 @app.route("/book/update", methods=['POST', 'OPTIONS'])
 @crossdomain(origin=url)
 def book_update():
-    pass
+    """Updates a book.
+
+    Method:
+        POST
+
+    Args:
+        token(str): User's token
+        id(str): Book's id
+        title(str): Book's title
+        year(date): Book's year
+        edition(int): Book's edition
+        cover(str): Book's cover url addres
+
+    Returns:
+        200: If book is updated
+
+    Raises:
+        403: If a invalid token is passed, or no token is passed, or invalid permission.
+        400: If can't update book
+        404: If no Book is found
+    """
+    try:
+        if not has_permission(request.json['token'], 'Admin'):
+            return jsonify(message="Access Denied"), 403
+
+        #ToDo: Check if title and edition already exists.
+
+        book = dbapi.books.get(request.json['id'])
+
+        if not book:
+            return jsonify(message="Couldn't find the specified book!"), 404
+
+        for arg in request.json:
+            if arg in book:
+                book[arg] = request.json[arg]
+
+        try:
+            dbapi.books.update(book)
+        except Exception:
+            return jsonify(message="We had a problem processing your request! Try again later."), 500
+
+        return  jsonify(message="Success! Book updated.", 200
+    except Exception:
+        return "Error! Maybe missing args.", 400
 
 @app.route("/book/delete", methods=['POST', 'OPTIONS'])
 @crossdomain(origin=url)
 def book_delete():
+    #ToDo: Delete Book and each reference to that book in a User list?? or delete only id there is no reference??
     pass
 
 @app.route("/book/search", methods=['POST', 'OPTIONS'])
 @crossdomain(origin=url)
 def book_all():
-    pass
+    """Get all books.
+
+    Method:
+        POST
+
+    Args:
+        title: (Optional[int]): Search books containing the specified title.
+        limit: (Optional[int]): Limit the total books returned, default is 10.
+        page: (Optional[int]): Especifies the page of books.
+
+    Returns:
+        json: Returns an array of books, with the next and last page if any.
+            {
+                'books': []
+                'total': Total books
+                'limit': Meals per page
+            }
+    Raises:
+        500: If the specified page does not exist.
+    """
+    try:
+        page = 0
+        limit = 10
+
+        if 'page' in request.json:
+            page = request.json['page']
+
+        if 'limit' in request.json:
+            limit = request.json['limit']
+
+        try:
+            if 'title' in request.json:
+                results, total = dbapi.books.get_all_by_title(title, limit, page)
+            else:
+                results, total = dbapi.books.get_all(limit, page)
+
+            for result in results:
+                result['_id'] = str(result['_id'])
+                result['datetime'] = result['datetime'].strftime("%m/%d/%Y %H:%M")
+
+        except Exception:
+            return jsonify(message="We had a problem processing your request! Try again later."), 500
+
+        response = {'books': results, 'limit': limit, 'total': total}
+
+        return json.dumps(response), 200
+    except Exception:
+        return "Error! Maybe missing args.", 400
 
 ###########
 #Movie API#
