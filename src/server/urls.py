@@ -398,7 +398,7 @@ def book_get():
         id(str): Book's id
 
     Returns:
-        Book(json): Return's a json object containing the book information.
+        book(json): Return's a json object containing the book information.
         200: If book exists
 
     Raises:
@@ -489,7 +489,7 @@ def book_all():
             {
                 'books': []
                 'total': Total books
-                'limit': Meals per page
+                'limit': Books per page
             }
     Raises:
         500: If the specified page does not exist.
@@ -526,6 +526,180 @@ def book_all():
 ###########
 #Movie API#
 ###########
+@app.route("/movie/create", methods=['POST', 'OPTIONS'])
+@crossdomain(origin=url)
+def movie_create():
+    """Creates a movie.
+
+    Method:
+        POST
+
+    Args:
+        token(str): User's token
+        title(str): Movie's title
+        year(date): Movie's year
+        cover(str): Movie's cover url addres
+
+    Returns:
+        id(str): Created movie Id
+        201: If movie is created
+
+    Raises:
+        403: If a invalid token is passed, or no token is passed, or invalid permission.
+        400: If can't create movie
+    """
+    try:
+        if not has_permission(request.json['token'], 'Admin'):
+            return jsonify(message="Access Denied"), 403
+
+        #ToDo: Check if title and year already exists.
+
+        movie = {'title': request.json['title'], 'year': request.json['year'], 'cover': request.json['cover']}
+
+        try:
+            _id = dbapi.movies.insert(movie).inserted_id
+        except Exception:
+            return jsonify(message="We had a problem processing your request! Try again later."), 500
+
+        return  jsonify(message="Success! Movie created.", _id=str(_id)), 201
+    except Exception:
+        return "Error! Maybe missing args.", 400
+
+@app.route("/movie/get", methods=['POST', 'OPTIONS'])
+@crossdomain(origin=url)
+def movie_get():
+    """Returns a movie according to the passed id.
+
+    Method:
+        POST
+
+    Args:
+        id(str): Movie's id
+
+    Returns:
+        movie(json): Return's a json object containing the movie information.
+        200: If movie exists
+
+    Raises:
+        404: If no Movie is found
+    """
+    try:
+        try:
+            movie = dbapi.movies.get(request.json['id'])
+
+            if not movie:
+                return jsonify(message="Couldn't find the specified movie!"), 404
+        except Exception:
+            return jsonify(message="We had a problem processing your request! Try again later."), 500
+
+        return  jsonify(message="Success! Movie found.", movie=movie), 201
+    except Exception:
+        return "Error! Maybe missing args.", 400
+
+@app.route("/movie/update", methods=['POST', 'OPTIONS'])
+@crossdomain(origin=url)
+def movie_update():
+    """Updates a movie.
+
+    Method:
+        POST
+
+    Args:
+        token(str): User's token
+        id(str): Movie's id
+        title(str): Movie's title
+        year(date): Movie's year
+        cover(str): Movie's cover url addres
+
+    Returns:
+        200: If movie is updated
+
+    Raises:
+        403: If a invalid token is passed, or no token is passed, or invalid permission.
+        400: If can't update movie
+        404: If no Movie is found
+    """
+    try:
+        if not has_permission(request.json['token'], 'Admin'):
+            return jsonify(message="Access Denied"), 403
+
+        #ToDo: Check if title and edition already exists.
+
+        movie = dbapi.movies.get(request.json['id'])
+
+        if not movie:
+            return jsonify(message="Couldn't find the specified movie!"), 404
+
+        for arg in request.json:
+            if arg in movie:
+                movie[arg] = request.json[arg]
+
+        try:
+            dbapi.movies.update(movie)
+        except Exception:
+            return jsonify(message="We had a problem processing your request! Try again later."), 500
+
+        return  jsonify(message="Success! Movie updated."), 200
+    except Exception:
+        return "Error! Maybe missing args.", 400
+
+@app.route("/movie/delete", methods=['POST', 'OPTIONS'])
+@crossdomain(origin=url)
+def movie_delete():
+    #ToDo: Delete Movie and each reference to that movie in a User list?? or delete only id there is no reference??
+    pass
+
+@app.route("/movie/search", methods=['POST', 'OPTIONS'])
+@crossdomain(origin=url)
+def movie_all():
+    """Get all movies.
+
+    Method:
+        POST
+
+    Args:
+        title: (Optional[int]): Search movies containing the specified title.
+        limit: (Optional[int]): Limit the total movies returned, default is 10.
+        page: (Optional[int]): Especifies the page of movies.
+
+    Returns:
+        json: Returns an array of movies, with the next and last page if any.
+            {
+                'movies': []
+                'total': Total movies
+                'limit': Movies per page
+            }
+    Raises:
+        500: If the specified page does not exist.
+    """
+    try:
+        page = 0
+        limit = 10
+
+        if 'page' in request.json:
+            page = request.json['page']
+
+        if 'limit' in request.json:
+            limit = request.json['limit']
+
+        try:
+            if 'title' in request.json:
+                results, total = dbapi.movies.get_all_by_title(title, limit, page)
+            else:
+                results, total = dbapi.movies.get_all(limit, page)
+
+            for result in results:
+                result['_id'] = str(result['_id'])
+                result['datetime'] = result['datetime'].strftime("%m/%d/%Y %H:%M")
+
+        except Exception:
+            return jsonify(message="We had a problem processing your request! Try again later."), 500
+
+        response = {'movies': results, 'limit': limit, 'total': total}
+
+        return json.dumps(response), 200
+    except Exception:
+        return "Error! Maybe missing args.", 400
 @app.route("/movie/create", methods=['POST', 'OPTIONS'])
 @crossdomain(origin=url)
 def movie_create():
