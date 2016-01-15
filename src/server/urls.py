@@ -700,30 +700,6 @@ def movie_all():
         return json.dumps(response), 200
     except Exception:
         return "Error! Maybe missing args.", 400
-@app.route("/movie/create", methods=['POST', 'OPTIONS'])
-@crossdomain(origin=url)
-def movie_create():
-    pass
-
-@app.route("/movie/get", methods=['POST', 'OPTIONS'])
-@crossdomain(origin=url)
-def movie_get():
-    pass
-
-@app.route("/movie/update", methods=['POST', 'OPTIONS'])
-@crossdomain(origin=url)
-def movie_update():
-    pass
-
-@app.route("/movie/delete", methods=['POST', 'OPTIONS'])
-@crossdomain(origin=url)
-def movie_delete():
-    pass
-
-@app.route("/movie/search", methods=['POST', 'OPTIONS'])
-@crossdomain(origin=url)
-def movie_all():
-    pass
 
 if __name__ == "__main__":
     app.run()
