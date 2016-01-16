@@ -316,7 +316,46 @@ def user_delete():
 @app.route("/user/addbook", methods=['POST', 'OPTIONS'])
 @crossdomain(origin=url)
 def user_add_book():
-    pass
+    """Add book to user list.
+
+    Method:
+        POST
+
+    Args:
+        username (str): User's username
+        token (str): User's session token
+        book_id(ObjId): Book's id
+
+    Returns:
+        200: If User's info were updated
+
+    Raises:
+        403: If a invalid token is passed, or no token is passed, or invalid permission.
+        404: If the specified Id does not exist.
+        400: If the user was not updated.
+        """
+    try:
+        user = dbapi.users.get(request.json['username'])
+
+        if not has_permission(request.json['token'], request.json['username']):
+            return jsonify(message="Access Denied"), 403
+
+        if not user:
+            return jsonify(message="Couldn't find the specified user!"), 404
+
+        book = dbapi.books.get(request.json['book_id'])
+
+        if not book:
+            return jsonify(message="Couldn't find the specified book!"), 404
+
+        try:
+            dbapi.users.insert_book(request.json['username'], request.json['book_id'])
+        except Exception:
+            return jsonify(message="We had a problem processing your request! Try again later."), 500
+
+        return  jsonify(message="Success! Book added."), 200
+    except Exception:
+        return jsonify(message="Error! Maybe missing args."), 400
 
 @app.route("/user/deletebook", methods=['POST', 'OPTIONS'])
 @crossdomain(origin=url)
@@ -326,11 +365,91 @@ def user_delete_book():
 @app.route("/user/updatebook", methods=['POST', 'OPTIONS'])
 @crossdomain(origin=url)
 def user_update_book():
-    pass
+    """Update book status on user list.
+
+    Method:
+        POST
+
+    Args:
+        username (str): User's username
+        token (str): User's session token
+        book_id(ObjId): Book's id
+        status:(int): Book's status
+
+    Returns:
+        200: If User's info were updated
+
+    Raises:
+        403: If a invalid token is passed, or no token is passed, or invalid permission.
+        404: If the specified Id does not exist.
+        400: If the user was not updated.
+        """
+    try:
+        user = dbapi.users.get(request.json['username'])
+
+        if not has_permission(request.json['token'], request.json['username']):
+            return jsonify(message="Access Denied"), 403
+
+        if not user:
+            return jsonify(message="Couldn't find the specified user!"), 404
+
+        book = dbapi.books.get(request.json['book_id'])
+
+        if not book:
+            return jsonify(message="Couldn't find the specified book!"), 404
+
+        try:
+            dbapi.users.update_book(request.json['username'], request.json['book_id'], request.json['status'])
+        except Exception:
+            return jsonify(message="We had a problem processing your request! Try again later."), 500
+
+        return  jsonify(message="Success! Book updated."), 200
+    except Exception:
+        return jsonify(message="Error! Maybe missing args."), 400
 
 @app.route("/user/addmovie", methods=['POST', 'OPTIONS'])
 @crossdomain(origin=url)
 def user_add_movie():
+    """Add movie to user list.
+
+    Method:
+        POST
+
+    Args:
+        username (str): User's username
+        token (str): User's session token
+        movie_id(ObjId): Movie's id
+
+    Returns:
+        200: If User's info were updated
+
+    Raises:
+        403: If a invalid token is passed, or no token is passed, or invalid permission.
+        404: If the specified Id does not exist.
+        400: If the user was not updated.
+        """
+    try:
+        user = dbapi.users.get(request.json['username'])
+
+        if not has_permission(request.json['token'], request.json['username']):
+            return jsonify(message="Access Denied"), 403
+
+        if not user:
+            return jsonify(message="Couldn't find the specified user!"), 404
+
+        movie = dbapi.books.get(request.json['movie_id'])
+
+        if not movie:
+            return jsonify(message="Couldn't find the specified movie!"), 404
+
+        try:
+            dbapi.users.insert_movie(request.json['username'], request.json['movie_id'])
+        except Exception:
+            return jsonify(message="We had a problem processing your request! Try again later."), 500
+
+        return  jsonify(message="Success! Movie added."), 200
+    except Exception:
+        return jsonify(message="Error! Maybe missing args."), 400
     pass
 
 @app.route("/user/deletemovie", methods=['POST', 'OPTIONS'])
@@ -341,7 +460,47 @@ def user_delete_movie():
 @app.route("/user/updatemovie", methods=['POST', 'OPTIONS'])
 @crossdomain(origin=url)
 def user_update_movie():
-    pass
+    """Update movie status on user list.
+
+    Method:
+        POST
+
+    Args:
+        username (str): User's username
+        token (str): User's session token
+        movie_id(ObjId): Movie's id
+        status:(int): Movie's status
+
+    Returns:
+        200: If User's info were updated
+
+    Raises:
+        403: If a invalid token is passed, or no token is passed, or invalid permission.
+        404: If the specified Id does not exist.
+        400: If the user was not updated.
+        """
+    try:
+        user = dbapi.users.get(request.json['username'])
+
+        if not has_permission(request.json['token'], request.json['username']):
+            return jsonify(message="Access Denied"), 403
+
+        if not user:
+            return jsonify(message="Couldn't find the specified user!"), 404
+
+        movie = dbapi.movies.get(request.json['book_id'])
+
+        if not movie:
+            return jsonify(message="Couldn't find the specified movie!"), 404
+
+        try:
+            dbapi.users.update_movie(request.json['username'], request.json['movie_id'], request.json['status'])
+        except Exception:
+            return jsonify(message="We had a problem processing your request! Try again later."), 500
+
+        return  jsonify(message="Success! Movie updated."), 200
+    except Exception:
+        return jsonify(message="Error! Maybe missing args."), 400
 
 ##########
 #Book API#
