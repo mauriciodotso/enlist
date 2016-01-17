@@ -7,7 +7,7 @@ class DBAPI(object):
         if db_type == 0:
             if not 'database' in kwargs:
                 connection = pymongo.MongoClient("mongodb://localhost")
-                self.database = connection.caloriescounter
+                self.database = connection.enlist
             else:
                 self.database = kwargs['database']
 
