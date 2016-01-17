@@ -25,7 +25,7 @@ class BookMongo(BaseMongo, BookDAO):
             cursor = self.table.find({'title': {'$regex': title}}).sort('title', pymongo.ASCENDING).limit(limit).skip(offset*limit)
             total = self.table.find({'title': {'$regex': title}}).count()
             result = []
-            
+
             for book in cursor:
                 result.append(book)
 
@@ -42,7 +42,7 @@ class BookMongo(BaseMongo, BookDAO):
 
             for book in cursor:
                 result.append(book)
-            
+
             return result, total
         except Exception:
             raise Exception
