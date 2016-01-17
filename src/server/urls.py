@@ -437,7 +437,7 @@ def user_add_movie():
         if not user:
             return jsonify(message="Couldn't find the specified user!"), 404
 
-        movie = dbapi.books.get(request.json['movie_id'])
+        movie = dbapi.movies.get(request.json['movie_id'])
 
         if not movie:
             return jsonify(message="Couldn't find the specified movie!"), 404
@@ -488,7 +488,7 @@ def user_update_movie():
         if not user:
             return jsonify(message="Couldn't find the specified user!"), 404
 
-        movie = dbapi.movies.get(request.json['book_id'])
+        movie = dbapi.movies.get(request.json['movie_id'])
 
         if not movie:
             return jsonify(message="Couldn't find the specified movie!"), 404
