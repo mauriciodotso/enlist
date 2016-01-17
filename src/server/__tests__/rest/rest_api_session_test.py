@@ -40,8 +40,6 @@ class RestAPISessionTest(unittest.TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(sessions, 1)
     
-        clean_database()
-
     def test_logout(self):
         token = 'ATDochTcKxrvCnqncrAcgtlyhCDwQfvbAurhqbYvJMyCUTFMTVZwYkrDbxKHwKXtzMRexjHRBvGVddCnBbpjpXqIaaPsXiaDIVCeOCJxCOCRNnxllFMNGdrBmTcphxbC'
         username =  "Test"
@@ -54,7 +52,5 @@ class RestAPISessionTest(unittest.TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(sessions, 0)
     
-        clean_database()
-
 if __name__ == "__main__":
     unittest.main()
