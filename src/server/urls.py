@@ -529,11 +529,9 @@ def book_create():
         400: If can't create book
     """
     try:
-        print request.json
         if not has_permission(request.json['token'], 'Admin'):
             return jsonify(message="Access Denied"), 403
 
-        print "asd"
         #ToDo: Check if title and edition already exists.
 
         book = {'title': request.json['title'], 'year': request.json['year'], 'edition': request.json['edition'], 'cover': request.json['cover']}
