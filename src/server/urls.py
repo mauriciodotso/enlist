@@ -613,13 +613,13 @@ def book_update():
 
         #ToDo: Check if title and edition already exists.
 
-        book = dbapi.books.get(request.json['_id'])
+        book = dbapi.books.get(ObjectId(request.json['_id']))
 
         if not book:
             return jsonify(message="Couldn't find the specified book!"), 404
 
         for arg in request.json:
-            if arg in book:
+            if arg in book and not (arg == '_id'):
                 book[arg] = request.json[arg]
 
         try:
