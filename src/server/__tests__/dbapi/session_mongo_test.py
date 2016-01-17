@@ -28,13 +28,13 @@ class SessionMongoTest(unittest.TestCase):
         token = 'ASDochTcKxrvCnqncrAcgtlyhCDwQfvbAurhqbYvJMyCUTFMTVZwYkrDbxKHwKXtzMRexjHRBvGVddCnBbpjpXqIaaPsXiaDIVCeOCJxCOCRNnxllFMNGdrBmTcphxbC'
         username =  "Test2"
 
-        dbapi.sessions.insert({'_id': token, 'username': username})
+        dbapi.sessions.insert({'_id': token, 'user_id': username})
 
         result = database.sessions.find_one({'_id': token})
         count = database.sessions.count()
        
         self.assertEqual(token, result['_id'])
-        self.assertEqual(username, result['username'])
+        self.assertEqual(username, result['user_id'])
         self.assertEqual(count, 2)
 
     def test_remove_one(self):

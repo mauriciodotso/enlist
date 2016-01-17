@@ -131,7 +131,7 @@ def login():
             token = generate_token(128)
 
             try:
-                dbapi.sessions.insert({'_id': token, 'username': request.json['username']})
+                dbapi.sessions.insert({'_id': token, 'user_id': request.json['username']})
                 user = dbapi.users.get(request.json['username'])
             except Exception:
                 return jsonify(message="We had a problem processing your request! Try again later."), 500
@@ -529,9 +529,11 @@ def book_create():
         400: If can't create book
     """
     try:
+        print request.json
         if not has_permission(request.json['token'], 'Admin'):
             return jsonify(message="Access Denied"), 403
 
+        print "asd"
         #ToDo: Check if title and edition already exists.
 
         book = {'title': request.json['title'], 'year': request.json['year'], 'edition': request.json['edition'], 'cover': request.json['cover']}

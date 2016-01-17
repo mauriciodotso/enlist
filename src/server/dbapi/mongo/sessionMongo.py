@@ -11,5 +11,3 @@ class SessionMongo(BaseMongo, SessionDAO):
             return self.table.remove(query)
         except Exception:
             raise Exception
-	
-	
