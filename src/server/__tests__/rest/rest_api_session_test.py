@@ -44,7 +44,7 @@ class RestAPISessionTest(unittest.TestCase):
         token = 'ATDochTcKxrvCnqncrAcgtlyhCDwQfvbAurhqbYvJMyCUTFMTVZwYkrDbxKHwKXtzMRexjHRBvGVddCnBbpjpXqIaaPsXiaDIVCeOCJxCOCRNnxllFMNGdrBmTcphxbC'
         username =  "Test"
 
-        dbapi.sessions.insert({'_id': token, 'username': username})
+        dbapi.sessions.insert({'_id': token, 'user_id': username})
 
         resp = self.app.post('/logout', data=json.dumps(dict({'token': token})), content_type='application/json')
         sessions = database.sessions.find({}).count()
