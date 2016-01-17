@@ -21,6 +21,8 @@ dbapi = DBAPI()
 def test_database(database):
     global dbapi
     dbapi = DBAPI(database=database)
+    global tdatabase
+    tdatabase = database
 
 #######################
 #Crossdomain decorator#
@@ -71,7 +73,10 @@ def crossdomain(origin=None, methods=None, headers=None,
 def has_permission(token, user_id):
     session = dbapi.sessions.get(request.json['token'])
 
-    return session['user_id'] == user_id
+    if session:
+        return session['user_id'] == user_id
+
+    return False
 
 ###########
 #Login API#
@@ -554,7 +559,7 @@ def book_get():
         POST
 
     Args:
-        id(str): Book's id
+        _id(str): Book's id
 
     Returns:
         book(json): Return's a json object containing the book information.
@@ -565,14 +570,16 @@ def book_get():
     """
     try:
         try:
-            book = dbapi.books.get(request.json['id'])
+            book = dbapi.books.get(ObjectId(request.json['_id']))
 
             if not book:
                 return jsonify(message="Couldn't find the specified book!"), 404
         except Exception:
             return jsonify(message="We had a problem processing your request! Try again later."), 500
 
-        return  jsonify(message="Success! Book found.", book=book), 201
+        book['_id'] = str(book['_id'])
+
+        return  jsonify(message="Success! Book found.", book=book), 200
     except Exception:
         return "Error! Maybe missing args.", 400
 
@@ -586,7 +593,7 @@ def book_update():
 
     Args:
         token(str): User's token
-        id(str): Book's id
+        _id(str): Book's id
         title(str): Book's title
         year(date): Book's year
         edition(int): Book's edition
@@ -606,7 +613,7 @@ def book_update():
 
         #ToDo: Check if title and edition already exists.
 
-        book = dbapi.books.get(request.json['id'])
+        book = dbapi.books.get(request.json['_id'])
 
         if not book:
             return jsonify(message="Couldn't find the specified book!"), 404
@@ -700,7 +707,7 @@ def movie_create():
         cover(str): Movie's cover url addres
 
     Returns:
-        id(str): Created movie Id
+        _id(str): Created movie Id
         201: If movie is created
 
     Raises:
@@ -733,7 +740,7 @@ def movie_get():
         POST
 
     Args:
-        id(str): Movie's id
+        _id(str): Movie's id
 
     Returns:
         movie(json): Return's a json object containing the movie information.
@@ -744,7 +751,7 @@ def movie_get():
     """
     try:
         try:
-            movie = dbapi.movies.get(request.json['id'])
+            movie = dbapi.movies.get(request.json['_id'])
 
             if not movie:
                 return jsonify(message="Couldn't find the specified movie!"), 404
@@ -765,7 +772,7 @@ def movie_update():
 
     Args:
         token(str): User's token
-        id(str): Movie's id
+        _id(str): Movie's id
         title(str): Movie's title
         year(date): Movie's year
         cover(str): Movie's cover url addres
@@ -784,7 +791,7 @@ def movie_update():
 
         #ToDo: Check if title and edition already exists.
 
-        movie = dbapi.movies.get(request.json['id'])
+        movie = dbapi.movies.get(request.json['_id'])
 
         if not movie:
             return jsonify(message="Couldn't find the specified movie!"), 404
