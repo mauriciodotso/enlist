@@ -639,7 +639,7 @@ def book_delete():
 
 @app.route("/book/search", methods=['POST', 'OPTIONS'])
 @crossdomain(origin=url)
-def book_all():
+def book_search():
     """Get all books.
 
     Method:
@@ -672,13 +672,12 @@ def book_all():
 
         try:
             if 'title' in request.json:
-                results, total = dbapi.books.get_all_by_title(title, limit, page)
+                results, total = dbapi.books.get_all_by_title(request.json['title'], limit, page)
             else:
                 results, total = dbapi.books.get_all(limit, page)
 
             for result in results:
                 result['_id'] = str(result['_id'])
-                result['datetime'] = result['datetime'].strftime("%m/%d/%Y %H:%M")
 
         except Exception:
             return jsonify(message="We had a problem processing your request! Try again later."), 500
