@@ -90,27 +90,6 @@ class RestAPIBookTest(unittest.TestCase):
         self.assertEqual(resp.status_code, 400)
 
     def test_book_update(self):
-        """Updates a book.
-
-        Method:
-            POST
-
-        Args:
-            token(str): User's token
-            id(str): Book's id
-            title(str): Book's title
-            year(date): Book's year
-            edition(int): Book's edition
-            cover(str): Book's cover url addres
-
-        Returns:
-            200: If book is updated
-
-        Raises:
-            403: If a invalid token is passed, or no token is passed, or invalid permission.
-            400: If can't update book
-            404: If no Book is found
-        """
         books[0]['title'] = "How to ge away with murder"
 
         resp = self.app.post('/book/update', data=json.dumps(dict({'token': token, '_id': books[0]['_id'], 'title': books[0]['title']})), content_type='application/json')
@@ -129,26 +108,6 @@ class RestAPIBookTest(unittest.TestCase):
         self.assertEqual(resp.status_code, 400)
 
     def test_book_search(self):
-        """Get all books.
-
-        Method:
-            POST
-
-        Args:
-            title: (Optional[int]): Search books containing the specified title.
-            limit: (Optional[int]): Limit the total books returned, default is 10.
-            page: (Optional[int]): Especifies the page of books.
-
-        Returns:
-            json: Returns an array of books, with the next and last page if any.
-                {
-                    'books': []
-                    'total': Total books
-                    'limit': Books per page
-                }
-        Raises:
-            500: If the specified page does not exist.
-        """
         resp = self.app.post('/book/search', data=json.dumps(dict({'limit': limit})), content_type='application/json')
         books_resp = json.loads(resp.data)
 
