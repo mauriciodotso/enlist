@@ -79,9 +79,7 @@ def has_permission(token, user_id):
     return False
 
 ###########
-#Login API#
-###########
-def make_salt():
+#Login APIdef make_salt():
     salt = ""
     for i in range(5):
         salt = salt + random.choice(string.ascii_letters)
@@ -137,7 +135,6 @@ def login():
 
             try:
                 dbapi.sessions.insert({'_id': token, 'user_id': request.json['username']})
-                user = dbapi.users.get(request.json['username'])
             except Exception:
                 return jsonify(message="We had a problem processing your request! Try again later."), 500
 
@@ -750,14 +747,16 @@ def movie_get():
     """
     try:
         try:
-            movie = dbapi.movies.get(request.json['_id'])
+            movie = dbapi.movies.get(ObjectId(request.json['_id']))
 
             if not movie:
                 return jsonify(message="Couldn't find the specified movie!"), 404
         except Exception:
             return jsonify(message="We had a problem processing your request! Try again later."), 500
 
-        return  jsonify(message="Success! Movie found.", movie=movie), 201
+        movie['_id'] = str(movie['_id'])
+
+        return  jsonify(message="Success! Movie found.", movie=movie), 200
     except Exception:
         return "Error! Maybe missing args.", 400
 
@@ -790,13 +789,13 @@ def movie_update():
 
         #ToDo: Check if title and edition already exists.
 
-        movie = dbapi.movies.get(request.json['_id'])
+        movie = dbapi.movies.get(ObjectId(request.json['_id']))
 
         if not movie:
             return jsonify(message="Couldn't find the specified movie!"), 404
 
         for arg in request.json:
-            if arg in movie:
+            if arg in movie and not (arg == "_id"):
                 movie[arg] = request.json[arg]
 
         try:
@@ -849,13 +848,12 @@ def movie_all():
 
         try:
             if 'title' in request.json:
-                results, total = dbapi.movies.get_all_by_title(title, limit, page)
+                results, total = dbapi.movies.get_all_by_title(request.json['title'], limit, page)
             else:
                 results, total = dbapi.movies.get_all(limit, page)
 
             for result in results:
                 result['_id'] = str(result['_id'])
-                result['datetime'] = result['datetime'].strftime("%m/%d/%Y %H:%M")
 
         except Exception:
             return jsonify(message="We had a problem processing your request! Try again later."), 500
