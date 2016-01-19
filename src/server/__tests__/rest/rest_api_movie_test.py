@@ -101,7 +101,7 @@ class RestAPIMovieTest(unittest.TestCase):
         resp = self.app.post('/movie/update', data=json.dumps(dict({'token': '', '_id': movies[0]['_id'], 'title': movies[0]['title']})), content_type='application/json')
         self.assertEqual(resp.status_code, 403)
 
-        resp = self.app.post('/movie/update', data=json.dumps(dict({'token': token, '_id': movies[0]['_id'].replace('1', '0')})), content_type='application/json')
+        resp = self.app.post('/movie/update', data=json.dumps(dict({'token': token, '_id': hex(int(movies[0]['_id'], 16) - 1)[2:].rstrip("L")})), content_type='application/json')
         self.assertEqual(resp.status_code, 404)
 
         resp = self.app.post('/movie/update', data=json.dumps(dict({'token': token})), content_type='application/json')
