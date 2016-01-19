@@ -452,7 +452,6 @@ def user_add_movie():
         return  jsonify(message="Success! Movie added."), 200
     except Exception:
         return jsonify(message="Error! Maybe missing args."), 400
-    pass
 
 @app.route("/user/deletemovie", methods=['POST', 'OPTIONS'])
 @crossdomain(origin=url)
