@@ -39,15 +39,15 @@ class MovieMongoTest(unittest.TestCase):
             movie['_id'] = movie_id
 
             if i%2 == 0:
-                database.users.update_one({'_id': user_id}, {'$addToSet': {'movies': movie_id}})
+                database.users.update_one({'_id': user_id}, {'$addToSet': {'movies': {'_id': movie_id, 'status': 0}}})
                 user_movies.append(movie)
 
             movies.append(movie)
 
     def tearDown(self):
-        global movies 
+        global movies
         movies = []
-        global user_movies 
+        global user_movies
         user_movies= []
         clean_database()
 
@@ -58,7 +58,7 @@ class MovieMongoTest(unittest.TestCase):
 
         for i in xrange(limit):
             self.assertEqual(movies[i], result[i])
-    
+
         result, movies_total = dbapi.movies.get_all(limit, offset)
 
         self.assertEqual(len(result), min((total - limit), limit))
@@ -74,7 +74,7 @@ class MovieMongoTest(unittest.TestCase):
 
         for i in xrange(limit):
             self.assertEqual(movies[i], result[i])
-    
+
         result, movies_total = dbapi.movies.get_all_by_title('Movie19', limit, offset)
 
         self.assertEqual(len(result), min((total - limit), limit))
@@ -91,7 +91,7 @@ class MovieMongoTest(unittest.TestCase):
 
         for i in xrange(limit):
             self.assertEqual(user_movies[i], result[i])
-    
+
         result, movies_total = dbapi.movies.get_all_by_user(user_id, limit, offset)
 
         self.assertEqual(len(result), min((total - limit), limit))

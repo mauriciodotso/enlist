@@ -39,7 +39,7 @@ class BookMongoTest(unittest.TestCase):
             book['_id'] = book_id
 
             if i%2 == 0:
-                database.users.update_one({'_id': user_id}, {'$addToSet': {'books': book_id}})
+                database.users.update_one({'_id': user_id}, {'$addToSet': {'books': {'_id': book_id, 'status': 0}}})
                 user_books.append(book)
 
             books.append(book)

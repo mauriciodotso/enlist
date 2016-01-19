@@ -35,7 +35,9 @@ class BookMongo(BaseMongo, BookDAO):
 
     def get_all_by_user(self, user_id, limit=10, offset=0):
         try:
-            books = self.database.users.find_one({'_id': user_id}, {'_id': 0, 'books': 1})['books']
+            books = self.database.users.find_one({'_id': user_id}, {'_id': 0, 'books._id': 1})['books']
+            books = [book['_id'] for book in books]
+
             cursor = self.table.find({'_id': {'$in': books}}).sort('title', pymongo.ASCENDING).limit(limit).skip(offset*limit)
             total = len(books)
             result = []
