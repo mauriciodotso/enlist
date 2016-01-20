@@ -79,7 +79,9 @@ def has_permission(token, user_id):
     return False
 
 ###########
-#Login APIdef make_salt():
+#Login API#
+###########
+def make_salt():
     salt = ""
     for i in range(5):
         salt = salt + random.choice(string.ascii_letters)
