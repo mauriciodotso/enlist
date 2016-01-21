@@ -261,11 +261,11 @@ def user_update():
     try:
         user = dbapi.users.get(request.json['username'])
 
-        if not has_permission(request.json['token'], request.json['username']):
-            return jsonify(message="Access Denied"), 403
-
         if not user:
             return jsonify(message="Couldn't find the specified user!"), 404
+
+        if not has_permission(request.json['token'], request.json['username']):
+            return jsonify(message="Access Denied"), 403
 
         if 'password' in request.json:
             user['password'] = make_pw_hash(request.json['password'])
@@ -290,6 +290,7 @@ def user_delete():
     Args:
         username (str): User's username
         token (str): User's session token
+        password (str): User's password
 
     Returns:
         200: If the user was deleted
@@ -299,17 +300,20 @@ def user_delete():
         404: If the specified Id does not exist.
     """
     try:
-        user = dbapi.users.get(request.json['_id'])
-
-        if not has_permission(request.json['token'], request.json['username']):
-            return jsonify(message="Access Denied"), 403
+        user = dbapi.users.get(request.json['username'])
 
         if not user:
             return jsonify(message="Couldn't find the specified Id"), 404
 
+        if not has_permission(request.json['token'], request.json['username']):
+            return jsonify(message="Access Denied"), 403
+
+        if not valid_user(request.json['username'], request.json['password']):
+            return jsonify(message="Wrong password!"), 404
+
         try:
             dbapi.users.remove(user['_id'])
-            dbapi.sessions.remove_all({'username': user['username']})
+            dbapi.sessions.remove_all({'user_id': user['_id']})
         except Exception:
             return jsonify(message="We had a problem processing your request! Try again later."), 500
 
@@ -341,19 +345,19 @@ def user_add_book():
     try:
         user = dbapi.users.get(request.json['username'])
 
-        if not has_permission(request.json['token'], request.json['username']):
-            return jsonify(message="Access Denied"), 403
-
         if not user:
             return jsonify(message="Couldn't find the specified user!"), 404
 
-        book = dbapi.books.get(request.json['book_id'])
+        if not has_permission(request.json['token'], request.json['username']):
+            return jsonify(message="Access Denied"), 403
+
+        book = dbapi.books.get(ObjectId(request.json['book_id']))
 
         if not book:
             return jsonify(message="Couldn't find the specified book!"), 404
 
         try:
-            dbapi.users.insert_book(request.json['username'], request.json['book_id'])
+            dbapi.users.insert_book(request.json['username'], ObjectId(request.json['book_id']))
         except Exception:
             return jsonify(message="We had a problem processing your request! Try again later."), 500
 
@@ -391,19 +395,19 @@ def user_update_book():
     try:
         user = dbapi.users.get(request.json['username'])
 
-        if not has_permission(request.json['token'], request.json['username']):
-            return jsonify(message="Access Denied"), 403
-
         if not user:
             return jsonify(message="Couldn't find the specified user!"), 404
 
-        book = dbapi.books.get(request.json['book_id'])
+        if not has_permission(request.json['token'], request.json['username']):
+            return jsonify(message="Access Denied"), 403
+
+        book = dbapi.books.get(ObjectId(request.json['book_id']))
 
         if not book:
             return jsonify(message="Couldn't find the specified book!"), 404
 
         try:
-            dbapi.users.update_book(request.json['username'], request.json['book_id'], request.json['status'])
+            dbapi.users.update_book(request.json['username'], ObjectId(request.json['book_id']), request.json['status'])
         except Exception:
             return jsonify(message="We had a problem processing your request! Try again later."), 500
 
@@ -435,19 +439,19 @@ def user_add_movie():
     try:
         user = dbapi.users.get(request.json['username'])
 
-        if not has_permission(request.json['token'], request.json['username']):
-            return jsonify(message="Access Denied"), 403
-
         if not user:
             return jsonify(message="Couldn't find the specified user!"), 404
 
-        movie = dbapi.movies.get(request.json['movie_id'])
+        if not has_permission(request.json['token'], request.json['username']):
+            return jsonify(message="Access Denied"), 403
+
+        movie = dbapi.movies.get(ObjectId(request.json['movie_id']))
 
         if not movie:
             return jsonify(message="Couldn't find the specified movie!"), 404
 
         try:
-            dbapi.users.insert_movie(request.json['username'], request.json['movie_id'])
+            dbapi.users.insert_movie(request.json['username'], ObjectId(request.json['movie_id']))
         except Exception:
             return jsonify(message="We had a problem processing your request! Try again later."), 500
 
@@ -485,19 +489,19 @@ def user_update_movie():
     try:
         user = dbapi.users.get(request.json['username'])
 
-        if not has_permission(request.json['token'], request.json['username']):
-            return jsonify(message="Access Denied"), 403
-
         if not user:
             return jsonify(message="Couldn't find the specified user!"), 404
 
-        movie = dbapi.movies.get(request.json['movie_id'])
+        if not has_permission(request.json['token'], request.json['username']):
+            return jsonify(message="Access Denied"), 403
+
+        movie = dbapi.movies.get(ObjectId(request.json['movie_id']))
 
         if not movie:
             return jsonify(message="Couldn't find the specified movie!"), 404
 
         try:
-            dbapi.users.update_movie(request.json['username'], request.json['movie_id'], request.json['status'])
+            dbapi.users.update_movie(request.json['username'], ObjectId(request.json['movie_id']), request.json['status'])
         except Exception:
             return jsonify(message="We had a problem processing your request! Try again later."), 500
 
