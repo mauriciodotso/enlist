@@ -34,8 +34,9 @@ class RestAPIUserTest(unittest.TestCase):
     def setUp(self):
         global user_id
         username =  "Test"
+        hashed_password = "ec386b1a1081c6298dd5bb632051f265dfc67ea95715eb68c52fc4d74d9f9616,12345"
 
-        user_id = database.users.insert({'_id': username, 'password': '123456789', 'movies': user_movies, 'books': user_books})
+        user_id = database.users.insert({'_id': username, 'password': hashed_password, 'movies': user_movies, 'books': user_books})
         dbapi.sessions.insert({'_id': token, 'user_id': username})
 
         year = 1975
@@ -66,12 +67,19 @@ class RestAPIUserTest(unittest.TestCase):
 
     def tearDown(self):
         global books
+        global movies
+        global user_books
+        global user_movies
         books = []
+        movies = []
+        user_books = []
+        user_movies = []
         clean_database()
 
     def test_user_create(self):
         username = "Test2"
-        password = "123456789"
+        password = "123456"
+
         resp = self.app.post('/user/create', data=json.dumps(dict({'username': username, 'password': password})), content_type='application/json')
         users = database.users.find({}).count()
 
@@ -92,130 +100,174 @@ class RestAPIUserTest(unittest.TestCase):
         self.assertEqual(users, 2)
 
     def test_user_update(self):
-        """Update specified user info.
+        username = "Test"
+        password = "987654321"
 
-        Method:
-            POST
+        resp = self.app.post('/user/update', data=json.dumps(dict({'token': token, 'username': username, 'password': password})), content_type='application/json')
+        self.assertEqual(resp.status_code, 200)
 
-        Args:
-            username (str): User's username
-            token (str): User's session token
-            password(Option[str]): User's updated password
+        resp = self.app.post('/user/update', data=json.dumps(dict({'token': "token", 'username': username, 'password': password})), content_type='application/json')
+        self.assertEqual(resp.status_code, 403)
 
-        Returns:
-            200: If User's info were updated
+        resp = self.app.post('/user/update', data=json.dumps(dict({'token': token, 'username': "Test2", 'password': password})), content_type='application/json')
+        self.assertEqual(resp.status_code, 404)
 
-        Raises:
-            403: If a invalid token is passed, or no token is passed, or invalid permission.
-            404: If the specified Id does not exist.
-            400: If the user was not updated.
-        """
-        pass
+        resp = self.app.post('/user/update', data=json.dumps(dict({})), content_type='application/json')
+        self.assertEqual(resp.status_code, 400)
 
     def test_user_delete(self):
-        """Delete specified user.
+        username = "Test"
+        password = "123456"
 
-        Method:
-            POST
+        resp = self.app.post('/user/delete', data=json.dumps(dict({})), content_type='application/json')
+        users = database.users.find({}).count()
 
-        Args:
-            username (str): User's username
-            token (str): User's session token
+        self.assertEqual(resp.status_code, 400)
+        self.assertEqual(users, 1)
 
-        Returns:
-            200: If the user was deleted
+        resp = self.app.post('/user/delete', data=json.dumps(dict({'token': "token", 'username': username, 'password': password})), content_type='application/json')
+        users = database.users.find({}).count()
 
-        Raises:
-            403: If a invalid token is passed, or no token is passed or invalid permission.
-            404: If the specified Id does not exist.
-        """
-        pass
+        self.assertEqual(resp.status_code, 403)
+        self.assertEqual(users, 1)
+
+        resp = self.app.post('/user/delete', data=json.dumps(dict({'token': "token", 'username': "Test2", 'password': password})), content_type='application/json')
+        users = database.users.find({}).count()
+
+        self.assertEqual(resp.status_code, 404)
+        self.assertEqual(users, 1)
+
+        resp = self.app.post('/user/delete', data=json.dumps(dict({'token': token, 'username': username, 'password': password})), content_type='application/json')
+        users = database.users.find({}).count()
+
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(users, 0)
 
     def test_user_add_book(self):
-        """Add book to user list.
+        username = "Test"
 
-        Method:
-            POST
+        resp = self.app.post('/user/addbook', data=json.dumps(dict({'token': token, 'username': username, 'book_id': books[1]['_id']})), content_type='application/json')
+        count = len(database.users.find_one({'_id': username}, {'books': 1})['books'])
 
-        Args:
-            username (str): User's username
-            token (str): User's session token
-            book_id(ObjId): Book's id
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(len(user_books) + 1, count)
 
-        Returns:
-            200: If User's info were updated
+        resp = self.app.post('/user/addbook', data=json.dumps(dict({'token': "token", 'username': username, 'book_id': books[3]['_id']})), content_type='application/json')
+        count = len(database.users.find_one({'_id': username}, {'books': 1})['books'])
 
-        Raises:
-            403: If a invalid token is passed, or no token is passed, or invalid permission.
-            404: If the specified Id does not exist.
-            400: If the user was not updated.
-        """
-        pass
+        self.assertEqual(resp.status_code, 403)
+        self.assertEqual(len(user_books) + 1, count)
+
+        resp = self.app.post('/user/addbook', data=json.dumps(dict({'token': "token", 'username': "Test2", 'book_id': books[3]['_id']})), content_type='application/json')
+        count = len(database.users.find_one({'_id': username}, {'books': 1})['books'])
+
+        self.assertEqual(resp.status_code, 404)
+        self.assertEqual(len(user_books) + 1, count)
+
+        resp = self.app.post('/user/addbook', data=json.dumps(dict({'token': "token", 'username': "Test2", 'book_id': str(hex(int(books[0]['_id'], 16) - 1)[2:])})), content_type='application/json')
+        count = len(database.users.find_one({'_id': username}, {'books': 1})['books'])
+
+        self.assertEqual(resp.status_code, 404)
+        self.assertEqual(len(user_books) + 1, count)
+
+        resp = self.app.post('/user/addbook', data=json.dumps(dict({})), content_type='application/json')
+        count = len(database.users.find_one({'_id': username}, {'books': 1})['books'])
+
+        self.assertEqual(resp.status_code, 400)
+        self.assertEqual(len(user_books) + 1, count)
 
     def test_user_update_book(self):
-        """Update book status on user list.
+        username = "Test"
 
-        Method:
-            POST
+        resp = self.app.post('/user/updatebook', data=json.dumps(dict({'token': token, 'username': username, 'book_id': books[0]['_id'], 'status': 1})), content_type='application/json')
+        status = (database.users.find_one({'_id': username}, {'books': 1})['books'])[0]['status']
 
-        Args:
-            username (str): User's username
-            token (str): User's session token
-            book_id(ObjId): Book's id
-            status:(int): Book's status
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(status, 1)
 
-        Returns:
-            200: If User's info were updated
+        resp = self.app.post('/user/updatebook', data=json.dumps(dict({'token': "token", 'username': username, 'book_id': books[3]['_id']})), content_type='application/json')
+        status = (database.users.find_one({'_id': username}, {'books': 1})['books'])[1]['status']
 
-        Raises:
-            403: If a invalid token is passed, or no token is passed, or invalid permission.
-            404: If the specified Id does not exist.
-            400: If the user was not updated.
-        """
-        pass
+        self.assertEqual(resp.status_code, 403)
+        self.assertEqual(status, 0)
+
+        resp = self.app.post('/user/updatebook', data=json.dumps(dict({'token': token, 'username': "Test2", 'book_id': books[2]['_id'], 'status': 1})), content_type='application/json')
+        status = (database.users.find_one({'_id': username}, {'books': 1})['books'])[1]['status']
+
+        self.assertEqual(resp.status_code, 404)
+        self.assertEqual(status, 0)
+
+        resp = self.app.post('/user/updatebook', data=json.dumps(dict({'token': token, 'username': "Test2", 'book_id': str(hex(int(books[0]['_id'], 16) - 1)[2:]), 'status': 1})), content_type='application/json')
+        status = (database.users.find_one({'_id': username}, {'books': 1})['books'])[1]['status']
+
+        self.assertEqual(resp.status_code, 404)
+        self.assertEqual(status, 0)
+
+        resp = self.app.post('/user/updatebook', data=json.dumps(dict({})), content_type='application/json')
+        self.assertEqual(resp.status_code, 400)
 
     def test_user_add_movie(self):
-        """Add movie to user list.
+        username = "Test"
 
-        Method:
-            POST
+        resp = self.app.post('/user/addmovie', data=json.dumps(dict({'token': token, 'username': username, 'movie_id': movies[0]['_id']})), content_type='application/json')
+        count = len(database.users.find_one({'_id': username}, {'movies': 1})['movies'])
 
-        Args:
-            username (str): User's username
-            token (str): User's session token
-            movie_id(ObjId): Movie's id
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(len(user_movies) + 1, count)
 
-        Returns:
-            200: If User's info were updated
+        resp = self.app.post('/user/addmovie', data=json.dumps(dict({'token': "token", 'username': username, 'movie_id': movies[3]['_id']})), content_type='application/json')
+        count = len(database.users.find_one({'_id': username}, {'movies': 1})['movies'])
 
-        Raises:
-            403: If a invalid token is passed, or no token is passed, or invalid permission.
-            404: If the specified Id does not exist.
-            400: If the user was not updated.
-        """
-        pass
+        self.assertEqual(resp.status_code, 403)
+        self.assertEqual(len(user_movies) + 1, count)
+
+        resp = self.app.post('/user/addmovie', data=json.dumps(dict({'token': "token", 'username': "Test2", 'movie_id': movies[3]['_id']})), content_type='application/json')
+        count = len(database.users.find_one({'_id': username}, {'movies': 1})['movies'])
+
+        self.assertEqual(resp.status_code, 404)
+        self.assertEqual(len(user_movies) + 1, count)
+
+        resp = self.app.post('/user/addmovie', data=json.dumps(dict({'token': "token", 'username': "Test2", 'movie_id': str(hex(int(movies[0]['_id'], 16) - 1)[2:])})), content_type='application/json')
+        count = len(database.users.find_one({'_id': username}, {'movies': 1})['movies'])
+
+        self.assertEqual(resp.status_code, 404)
+        self.assertEqual(len(user_movies) + 1, count)
+
+        resp = self.app.post('/user/addmovie', data=json.dumps(dict({})), content_type='application/json')
+        count = len(database.users.find_one({'_id': username}, {'movies': 1})['movies'])
+
+        self.assertEqual(resp.status_code, 400)
+        self.assertEqual(len(user_movies) + 1, count)
 
     def test_user_update_movie(self):
-        """Update movie status on user list.
+        username = "Test"
 
-        Method:
-            POST
+        resp = self.app.post('/user/updatemovie', data=json.dumps(dict({'token': token, 'username': username, 'movie_id': movies[1]['_id'], 'status': 1})), content_type='application/json')
+        status = (database.users.find_one({'_id': username}, {'movies': 1})['movies'])[0]['status']
 
-        Args:
-            username (str): User's username
-            token (str): User's session token
-            movie_id(ObjId): Movie's id
-        status:(int): Movie's status
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(status, 1)
 
-        Returns:
-            200: If User's info were updated
+        resp = self.app.post('/user/updatemovie', data=json.dumps(dict({'token': "token", 'username': username, 'movie_id': movies[3]['_id']})), content_type='application/json')
+        status = (database.users.find_one({'_id': username}, {'movies': 1})['movies'])[1]['status']
 
-        Raises:
-            403: If a invalid token is passed, or no token is passed, or invalid permission.
-            404: If the specified Id does not exist.
-            400: If the user was not updated.
-        """
-        pass
+        self.assertEqual(resp.status_code, 403)
+        self.assertEqual(status, 0)
+
+        resp = self.app.post('/user/updatemovie', data=json.dumps(dict({'token': token, 'username': "Test2", 'movie_id': movies[3]['_id'], 'status': 1})), content_type='application/json')
+        status = (database.users.find_one({'_id': username}, {'movies': 1})['movies'])[1]['status']
+
+        self.assertEqual(resp.status_code, 404)
+        self.assertEqual(status, 0)
+
+        resp = self.app.post('/user/updatemovie', data=json.dumps(dict({'token': token, 'username': "Test2", 'movie_id': str(hex(int(movies[0]['_id'], 16) - 1)[2:]), 'status': 1})), content_type='application/json')
+        status = (database.users.find_one({'_id': username}, {'movies': 1})['movies'])[1]['status']
+
+        self.assertEqual(resp.status_code, 404)
+        self.assertEqual(status, 0)
+
+        resp = self.app.post('/user/updatemovie', data=json.dumps(dict({})), content_type='application/json')
+        self.assertEqual(resp.status_code, 400)
 
 if __name__ == "__main__":
     unittest.main()
