@@ -1,5 +1,7 @@
 package com.nkbits.apps.enlist;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -19,7 +21,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+            setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -79,15 +81,71 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        Fragment fragment = null;
+        Bundle bundle = new Bundle();
 
         if (id == R.id.nav_my_books) {
+            Book book_data[] = new Book[]
+                    {
+                            new Book("Cloudy", 1, 1900),
+                            new Book("Showers", 2, 1910),
+                            new Book("Snow", 3, 1920),
+                            new Book("Storm", 4, 1930),
+                            new Book("Sunny", 5, 1940)
+                    };
 
+            fragment = new TemplateListView<Book>();
+            bundle.putSerializable(TemplateListView.DATA, book_data);
+            bundle.putString(TemplateListView.VIEW, "Book");
+            fragment.setArguments(bundle);
         } else if (id == R.id.nav_my_movies) {
+            Movie movie_data[] = new Movie[]
+                    {
+                            new Movie("Cloudy", 1900),
+                            new Movie("Showers", 1910),
+                            new Movie("Snow", 1920),
+                            new Movie("Storm", 1930),
+                            new Movie("Sunny", 1940)
+                    };
 
+            fragment = new TemplateListView<Movie>();
+            bundle.putSerializable(TemplateListView.DATA, movie_data);
+            bundle.putString(TemplateListView.VIEW, "Movie");
+            fragment.setArguments(bundle);
         } else if (id == R.id.nav_search_books) {
+            Book book_data[] = new Book[]
+                    {
+                            new Book("Cloudy", 1, 1900),
+                            new Book("Showers", 2, 1910),
+                            new Book("Snow", 3, 1920),
+                            new Book("Storm", 4, 1930),
+                            new Book("Sunny", 5, 1940)
+                    };
 
+            fragment = new TemplateListView<Book>();
+            bundle.putSerializable(TemplateListView.DATA, book_data);
+            bundle.putString(TemplateListView.VIEW, "Book");
+            fragment.setArguments(bundle);
         } else if (id == R.id.nav_search_movies) {
+            Movie movie_data[] = new Movie[]
+                    {
+                            new Movie("Cloudy", 1900),
+                            new Movie("Showers", 1910),
+                            new Movie("Snow", 1920),
+                            new Movie("Storm", 1930),
+                            new Movie("Sunny", 1940)
+                    };
 
+            fragment = new TemplateListView<Movie>();
+            bundle.putSerializable(TemplateListView.DATA, movie_data);
+            bundle.putString(TemplateListView.VIEW, "Movie");
+            fragment.setArguments(bundle);
+        }
+
+        if (fragment != null) {
+            FragmentManager fragmentManager = getFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, fragment).commit();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
