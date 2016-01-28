@@ -6,7 +6,7 @@ import com.loopj.android.http.*;
  * Created by nakayama on 1/23/16.
  */
 public class HTTPRequest {
-    private static final String BASE_URL = "http://192.168.25.58:5000";
+    private static final String BASE_URL = "http://192.168.25.58:5000/";
 
     private static SyncHttpClient client = new SyncHttpClient();
 

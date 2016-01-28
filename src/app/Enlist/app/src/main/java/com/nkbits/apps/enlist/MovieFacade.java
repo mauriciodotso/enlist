@@ -39,7 +39,7 @@ public class MovieFacade{
 
 class MovieFacadeExtend extends BaseFacade<Movie>{
     public MovieFacadeExtend(){
-        super("/book/");
+        super("movie/");
     }
 
     @Override

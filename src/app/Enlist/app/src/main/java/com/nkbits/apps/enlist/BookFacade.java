@@ -39,7 +39,7 @@ public class BookFacade{
 
 class BookFacadeExtend extends BaseFacade<Book>{
     public BookFacadeExtend(){
-        super("/book/");
+        super("book/");
     }
 
     @Override
