@@ -12,11 +12,11 @@ public class BookFacade{
         return facade.get(Id);
     }
 
-    public static Book create(Book item, String token){
+    public static String create(Book item, String token){
         return facade.create(item, token);
     }
 
-    public static Book update(Book item, String token){
+    public static boolean update(Book item, String token){
         return facade.update(item, token);
     }
 
