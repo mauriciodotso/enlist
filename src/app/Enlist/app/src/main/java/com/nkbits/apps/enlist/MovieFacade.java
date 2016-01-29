@@ -6,33 +6,33 @@ import org.json.JSONObject;
  * Created by nakayama on 1/25/16.
  */
 public class MovieFacade{
-    private static BookFacadeExtend facade = new BookFacadeExtend();
+    private static MovieFacadeExtend facade = new MovieFacadeExtend();
 
-    public static Book get(String Id){
+    public static Movie get(String Id){
         return facade.get(Id);
     }
 
-    public static Book create(Book item, String token){
+    public static String create(Movie item, String token){
         return facade.create(item, token);
     }
 
-    public static Book update(Book item, String token){
+    public static boolean update(Movie item, String token){
         return facade.update(item, token);
     }
 
-    public static Book[] getAll(int limit, int page){
+    public static Movie[] getAll(int limit, int page){
         return facade.getAll(limit, page);
     }
 
-    public static Book[] getAll(){
+    public static Movie[] getAll(){
         return facade.getAll();
     }
 
-    public static Book[] searchByTitle(String title, int limit, int page){
+    public static Movie[] searchByTitle(String title, int limit, int page){
         return facade.searchByTitle(title, limit, page);
     }
 
-    public static Book[] searchByTitle(String title){
+    public static Movie[] searchByTitle(String title){
         return facade.searchByTitle(title);
     }
 }
