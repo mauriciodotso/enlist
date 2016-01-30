@@ -83,7 +83,7 @@ class RestAPIBookTest(unittest.TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(books[0], json.loads(resp.data)['book'])
 
-        resp = self.app.post('/book/get', data=json.dumps(dict({'_id': books[0]['_id'].replace('1', '0')})), content_type='application/json')
+        resp = self.app.post('/book/get', data=json.dumps(dict({'_id': hex(int(books[0]['_id'], 16) - 1)[2:].rstrip("L")})), content_type='application/json')
         self.assertEqual(resp.status_code, 404)
 
         resp = self.app.post('/book/create', data=json.dumps(dict({})), content_type='application/json')
