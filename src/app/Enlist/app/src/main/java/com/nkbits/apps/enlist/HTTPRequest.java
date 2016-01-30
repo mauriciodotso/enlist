@@ -6,9 +6,17 @@ import com.loopj.android.http.*;
  * Created by nakayama on 1/23/16.
  */
 public class HTTPRequest {
-    private static final String BASE_URL = "http://192.168.25.58:5000/";
+    private static String BASE_URL = "http://192.168.25.58:5000/";
 
     private static SyncHttpClient client = new SyncHttpClient();
+
+    public void setBaseUrl(String url){
+        BASE_URL = url;
+    }
+
+    public String getBaseUrl(){
+        return BASE_URL;
+    }
 
     public static void get(String url, RequestParams params, JsonHttpResponseHandler responseHandler) {
         client.get(getAbsoluteUrl(url), params, responseHandler);
