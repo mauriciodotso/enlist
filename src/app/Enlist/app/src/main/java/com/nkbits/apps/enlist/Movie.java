@@ -7,6 +7,7 @@ import org.json.JSONObject;
  * Created by nakayama on 1/23/16.
  */
 public class Movie implements Item{
+    public String _id;
     public String title;
     public int year;
 
@@ -15,8 +16,15 @@ public class Movie implements Item{
         this.year = year;
     }
 
+    public Movie(String _id, String title, int year){
+        this._id = _id;
+        this.title = title;
+        this.year = year;
+    }
+
     public Movie(JSONObject json) {
         try {
+            this._id = json.getString("_id");
             this.title = json.getString("title");
             this.year = json.getInt("year");
         } catch (JSONException e) {
