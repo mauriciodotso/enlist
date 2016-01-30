@@ -10,11 +10,11 @@ public class HTTPRequest {
 
     private static SyncHttpClient client = new SyncHttpClient();
 
-    public void setBaseUrl(String url){
+    public static void setBaseUrl(String url){
         BASE_URL = url;
     }
 
-    public String getBaseUrl(){
+    public static String getBaseUrl(){
         return BASE_URL;
     }
 
