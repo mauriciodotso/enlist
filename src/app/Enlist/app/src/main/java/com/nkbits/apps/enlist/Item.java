@@ -1,5 +1,7 @@
 package com.nkbits.apps.enlist;
 
+import com.loopj.android.http.RequestParams;
+
 import org.json.JSONObject;
 
 /**
@@ -7,4 +9,5 @@ import org.json.JSONObject;
  */
 public interface Item {
     JSONObject JSON();
+    RequestParams getParams();
 }
