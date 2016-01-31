@@ -1,5 +1,7 @@
 package com.nkbits.apps.enlist;
 
+import com.loopj.android.http.RequestParams;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -42,5 +44,15 @@ public class Book implements Item{
         }catch (JSONException e){
             return null;
         }
+    }
+
+    public RequestParams getParams(){
+        RequestParams params = new RequestParams();
+        params.put("_id", this._id);
+        params.put("title", this.title);
+        params.put("year", this.title);
+        params.put("edition", this.title);
+
+        return params;
     }
 }

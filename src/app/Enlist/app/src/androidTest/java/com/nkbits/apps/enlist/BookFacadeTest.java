@@ -45,4 +45,43 @@ public class BookFacadeTest extends InstrumentationTestCase {
 
         server.shutdown();
     }
+
+    public void testCreate() throws Exception{
+        MockWebServer server = new MockWebServer();
+        MockResponse response = new MockResponse()
+                .addHeader("Content-Type", "application/json; charset=utf-8")
+                .addHeader("Cache-Control", "no-cache")
+                .setBody("{_id: '507f191e810c19729de860ea'}");
+
+        server.enqueue(response);
+        server.start();
+
+        HttpUrl baseUrl = server.url("");
+
+        HTTPRequest.setBaseUrl(baseUrl.toString());
+        Book book = new Book("title", 1, 1991);
+        String _id = BookFacade.create(book, "token");
+
+        assertEquals("507f191e810c19729de860ea",_id);
+
+        RecordedRequest request = server.takeRequest();
+        assertEquals("/book/create", request.getPath());
+
+        server.shutdown();
+    }
+
+    public void testUpdate() throws Exception{
+    }
+
+    public void testGetAllWithLimit() throws Exception{
+    }
+
+    public void testGetAll() throws Exception{
+    }
+
+    public void testSearchByTitleWithLimit() throws Exception{
+    }
+
+    public void testSearchByTitle() throws Exception{
+    }
 }
