@@ -52,8 +52,8 @@ public abstract class BaseFacade<T extends Item> {
         final String[] _id = new String[1];
 
         /*params*/
-        RequestParams params = new RequestParams(item.JSON());
-        params.put("token",token);
+        RequestParams params = item.getParams();
+        params.put("token", token);
 
         /*request*/
         HTTPRequest.post(url + "create", params, new JsonHttpResponseHandler() {
@@ -83,7 +83,7 @@ public abstract class BaseFacade<T extends Item> {
         final boolean[] success = {true};
 
         /*params*/
-        RequestParams params = new RequestParams(item.JSON());
+        RequestParams params = item.getParams();
         params.put("token",token);
 
         /*request*/
