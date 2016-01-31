@@ -51,7 +51,8 @@ public class BookFacadeTest extends InstrumentationTestCase {
         MockResponse response = new MockResponse()
                 .addHeader("Content-Type", "application/json; charset=utf-8")
                 .addHeader("Cache-Control", "no-cache")
-                .setBody("{_id: '507f191e810c19729de860ea'}");
+                .setBody("{_id: '507f191e810c19729de860ea'}")
+                .setResponseCode(201);
 
         server.enqueue(response);
         server.start();
@@ -71,17 +72,35 @@ public class BookFacadeTest extends InstrumentationTestCase {
     }
 
     public void testUpdate() throws Exception{
+        MockWebServer server = new MockWebServer();
+        MockResponse response = new MockResponse()
+                .addHeader("Content-Type", "application/json; charset=utf-8")
+                .addHeader("Cache-Control", "no-cache")
+                .setBody("{_id: '507f191e810c19729de860ea'}");
+
+
+        server.enqueue(response);
+        server.start();
+
+        HttpUrl baseUrl = server.url("");
+
+        HTTPRequest.setBaseUrl(baseUrl.toString());
+        Book book = new Book("507f191e810c19729de860ea", "title", 1, 1991);
+        boolean status = BookFacade.update(book, "token");
+
+        assertEquals(true, status);
+
+        RecordedRequest request = server.takeRequest();
+        assertEquals("/book/update", request.getPath());
+
+        server.shutdown();
     }
 
     public void testGetAllWithLimit() throws Exception{
-    }
 
-    public void testGetAll() throws Exception{
     }
 
     public void testSearchByTitleWithLimit() throws Exception{
-    }
 
-    public void testSearchByTitle() throws Exception{
     }
 }
