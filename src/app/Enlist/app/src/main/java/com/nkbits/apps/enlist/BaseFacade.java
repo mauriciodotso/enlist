@@ -151,7 +151,7 @@ public abstract class BaseFacade<T extends Item> {
 
         /*params*/
         RequestParams params = new RequestParams();
-        params.put("title", limit);
+        params.put("title", title);
         params.put("limit", limit);
         params.put("page", page);
 
