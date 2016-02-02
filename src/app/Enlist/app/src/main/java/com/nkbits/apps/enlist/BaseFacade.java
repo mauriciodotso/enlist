@@ -16,6 +16,8 @@ public abstract class BaseFacade<T extends Item> {
     private String url;
 
     abstract T getConstructor(JSONObject json);
+    abstract T[] getArray(JSONObject[] json);
+
 
     protected BaseFacade(String url){
         this.url = url;
@@ -107,7 +109,7 @@ public abstract class BaseFacade<T extends Item> {
     }
 
     protected T[] getAll(int limit, int page){
-        final Object[] items = new Object[limit];
+        final JSONObject[][] items = new JSONObject[1][1];
 
         /*params*/
         RequestParams params = new RequestParams();
@@ -121,9 +123,10 @@ public abstract class BaseFacade<T extends Item> {
                 if(statusCode == 200) {
                     try {
                         JSONArray jsonItems = response.getJSONArray("books");
+                        items[0] = new JSONObject[jsonItems.length()];
 
                         for(int i = 0; i < jsonItems.length(); i++){
-                            items[i] = getConstructor(jsonItems.getJSONObject(i));
+                            items[0][i] = jsonItems.getJSONObject(i);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -136,10 +139,11 @@ public abstract class BaseFacade<T extends Item> {
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable e, JSONObject errorResponse) {
                 //ToDo: handle failure here
+                int a = 0;
             }
         });
 
-        return (T[])items;
+        return getArray(items[0]);
     }
 
     protected T[] getAll(){
@@ -147,7 +151,7 @@ public abstract class BaseFacade<T extends Item> {
     }
 
     protected T[] searchByTitle(String title, int limit, int page){
-        final Object[] items = new Object[limit];
+        final JSONObject[][] items = new JSONObject[1][1];
 
         /*params*/
         RequestParams params = new RequestParams();
@@ -162,9 +166,10 @@ public abstract class BaseFacade<T extends Item> {
                 if(statusCode == 200) {
                     try {
                         JSONArray jsonItems = response.getJSONArray("books");
+                        items[0] = new JSONObject[jsonItems.length()];
 
                         for(int i = 0; i < jsonItems.length(); i++){
-                            items[i] = getConstructor(jsonItems.getJSONObject(i));
+                            items[0][i] = jsonItems.getJSONObject(i);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -180,7 +185,7 @@ public abstract class BaseFacade<T extends Item> {
             }
         });
 
-        return (T[])items;
+        return getArray(items[0]);
     }
 
     protected T[] searchByTitle(String title){
