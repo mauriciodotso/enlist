@@ -46,4 +46,14 @@ class MovieFacadeExtend extends BaseFacade<Movie>{
     Movie getConstructor(JSONObject json){
         return new Movie(json);
     }
+
+    @Override
+    Movie[] getArray(JSONObject[] json){
+        Movie[] movies = new Movie[json.length];
+
+        for(int i = 0; i < movies.length; i++)
+            movies[i] = new Movie(json[i]);
+
+        return movies;
+    }
 }

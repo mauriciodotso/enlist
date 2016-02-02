@@ -46,4 +46,14 @@ class BookFacadeExtend extends BaseFacade<Book>{
     Book getConstructor(JSONObject json){
         return new Book(json);
     }
+
+    @Override
+    Book[] getArray(JSONObject[] json){
+        Book[] books = new Book[json.length];
+
+        for(int i = 0; i < books.length; i++)
+            books[i] = new Book(json[i]);
+
+        return books;
+    }
 }
