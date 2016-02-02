@@ -73,13 +73,8 @@ public class BookFacadeTest extends InstrumentationTestCase {
 
     public void testUpdate() throws Exception{
         MockWebServer server = new MockWebServer();
-        MockResponse response = new MockResponse()
-                .addHeader("Content-Type", "application/json; charset=utf-8")
-                .addHeader("Cache-Control", "no-cache")
-                .setBody("{_id: '507f191e810c19729de860ea'}");
 
-
-        server.enqueue(response);
+        server.enqueue(new MockResponse());
         server.start();
 
         HttpUrl baseUrl = server.url("");
@@ -97,10 +92,56 @@ public class BookFacadeTest extends InstrumentationTestCase {
     }
 
     public void testGetAllWithLimit() throws Exception{
+        MockWebServer server = new MockWebServer();
+        MockResponse response = new MockResponse()
+                .addHeader("Content-Type", "application/json; charset=utf-8")
+                .addHeader("Cache-Control", "no-cache")
+                .setBody("{books: [{_id: '507f191e810c19729de860ea', title: 'title', edition: 0, year: 1990}," +
+                        "{_id: '507f191e810c19729de860eb', title1: 'title', edition: 1, year: 1991}," +
+                        "{_id: '507f191e810c19729de860ec', title2: 'title', edition: 2, year: 1992}," +
+                        "{_id: '507f191e810c19729de860ed', title3: 'title', edition: 3, year: 1993}," +
+                        "{_id: '507f191e810c19729de860ee', title4: 'title', edition: 4, year: 1994}], total: 5, limit: 10}");
 
+        server.enqueue(response);
+        server.start();
+
+        HttpUrl baseUrl = server.url("");
+
+        HTTPRequest.setBaseUrl(baseUrl.toString());
+        Book[] books = BookFacade.getAll(10, 0);
+
+        assertEquals(5, books.length);
+
+        RecordedRequest request = server.takeRequest();
+        assertEquals("/book/search", request.getPath());
+
+        server.shutdown();
     }
 
     public void testSearchByTitleWithLimit() throws Exception{
+        MockWebServer server = new MockWebServer();
+        MockResponse response = new MockResponse()
+                .addHeader("Content-Type", "application/json; charset=utf-8")
+                .addHeader("Cache-Control", "no-cache")
+                .setBody("{books: [{_id: '507f191e810c19729de860ea', title: 'title', edition: 0, year: 1990}," +
+                        "{_id: '507f191e810c19729de860eb', title1: 'title', edition: 1, year: 1991}," +
+                        "{_id: '507f191e810c19729de860ec', title2: 'title', edition: 2, year: 1992}," +
+                        "{_id: '507f191e810c19729de860ed', title3: 'title', edition: 3, year: 1993}," +
+                        "{_id: '507f191e810c19729de860ee', title4: 'title', edition: 4, year: 1994}], total: 5, limit: 10}");
 
+        server.enqueue(response);
+        server.start();
+
+        HttpUrl baseUrl = server.url("");
+
+        HTTPRequest.setBaseUrl(baseUrl.toString());
+        Book[] books = BookFacade.searchByTitle("title", 10, 0);
+
+        assertEquals(5, books.length);
+
+        RecordedRequest request = server.takeRequest();
+        assertEquals("/book/search", request.getPath());
+
+        server.shutdown();
     }
 }
