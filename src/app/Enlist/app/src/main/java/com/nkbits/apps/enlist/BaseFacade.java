@@ -14,13 +14,17 @@ import org.json.JSONObject;
  */
 public abstract class BaseFacade<T extends Item> {
     private String url;
+    private String collection;
+
 
     abstract T getConstructor(JSONObject json);
     abstract T[] getArray(JSONObject[] json);
 
 
-    protected BaseFacade(String url){
+
+    protected BaseFacade(String url, String collection){
         this.url = url;
+        this.collection = collection;
     }
 
     protected T get(String Id){
@@ -122,7 +126,7 @@ public abstract class BaseFacade<T extends Item> {
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 if(statusCode == 200) {
                     try {
-                        JSONArray jsonItems = response.getJSONArray("books");
+                        JSONArray jsonItems = response.getJSONArray(collection);
                         items[0] = new JSONObject[jsonItems.length()];
 
                         for(int i = 0; i < jsonItems.length(); i++){
@@ -165,7 +169,7 @@ public abstract class BaseFacade<T extends Item> {
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 if(statusCode == 200) {
                     try {
-                        JSONArray jsonItems = response.getJSONArray("books");
+                        JSONArray jsonItems = response.getJSONArray(collection);
                         items[0] = new JSONObject[jsonItems.length()];
 
                         for(int i = 0; i < jsonItems.length(); i++){
