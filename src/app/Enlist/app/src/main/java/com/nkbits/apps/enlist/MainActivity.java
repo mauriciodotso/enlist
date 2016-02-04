@@ -122,9 +122,9 @@ public class MainActivity extends AppCompatActivity
                             new Book("Sunny", 5, 1940)
                     };
 
-            fragment = new TemplateListView<Book>();
-            bundle.putSerializable(TemplateListView.DATA, book_data);
-            bundle.putString(TemplateListView.VIEW, "Book");
+            fragment = new SearchListView<>();
+            bundle.putSerializable(SearchListView.DATA, book_data);
+            bundle.putString(SearchListView.VIEW, "Book");
             fragment.setArguments(bundle);
         } else if (id == R.id.nav_search_movies) {
             Movie movie_data[] = new Movie[]
@@ -136,9 +136,9 @@ public class MainActivity extends AppCompatActivity
                             new Movie("Sunny", 1940)
                     };
 
-            fragment = new TemplateListView<Movie>();
-            bundle.putSerializable(TemplateListView.DATA, movie_data);
-            bundle.putString(TemplateListView.VIEW, "Movie");
+            fragment = new SearchListView<Movie>();
+            bundle.putSerializable(SearchListView.DATA, movie_data);
+            bundle.putString(SearchListView.VIEW, "Movie");
             fragment.setArguments(bundle);
         }
 
