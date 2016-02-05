@@ -40,7 +40,7 @@ public class Book implements Item{
 
     public JSONObject JSON(){
         try {
-            return new JSONObject("{'title':" + this.title + ", 'year':" + this.year + ", 'edition':" + this.edition + "}");
+            return new JSONObject("{'_id:'" + this._id + ", 'title':" + this.title + ", 'year':" + this.year + ", 'edition':" + this.edition + "}");
         }catch (JSONException e){
             return null;
         }
