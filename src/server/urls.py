@@ -649,6 +649,7 @@ def book_search():
 
     Args:
         title: (Optional[int]): Search books containing the specified title.
+        username: (Optional[int]): Search books in the user favorites collection.
         limit: (Optional[int]): Limit the total books returned, default is 10.
         page: (Optional[int]): Especifies the page of books.
 
@@ -675,6 +676,8 @@ def book_search():
         try:
             if 'title' in request.json:
                 results, total = dbapi.books.get_all_by_title(request.json['title'], limit, page)
+            elif 'username' in request.json:
+                results, total = dbapi.books.get_all_by_username(request.json['username'], limit, page)
             else:
                 results, total = dbapi.books.get_all(limit, page)
 
