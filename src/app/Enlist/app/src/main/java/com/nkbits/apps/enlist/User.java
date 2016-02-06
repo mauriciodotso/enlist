@@ -11,53 +11,26 @@ import org.json.JSONObject;
  */
 public class User implements Item{
     public String _id;
-    public Movie[] movies;
-    public Book[] books;
+    public String token;
 
-    public User(String _id, Movie[] movies, Book[] books){
+    public User(String _id, String token){
         this._id = _id;
-        this.movies = movies;
-        this.books = books;
-    }
-
-    public User(Movie[] movies, Book[] books){
-        this.movies = movies;
-        this.books = books;
-    }
-
-    public User(JSONObject json) {
-        try {
-            this._id = json.getString("_id");
-            JSONArray movies = json.getJSONArray("movies");
-            JSONArray books = json.getJSONArray("books");
-            this.books = new Book[books.length()];
-            this.movies = new Movie[movies.length()];
-        } catch (JSONException e) {
-            //ToDo: Handle exception
-        }
+        this.token = token;
     }
 
     public JSONObject JSON(){
         try {
-            JSONArray movies = new JSONArray(this.movies);
-            JSONArray books = new JSONArray(this.books);
-            return new JSONObject("{'_id':" + this._id + ", 'books':" + books.toString() + ", 'movies':" + movies.toString() + "}");
+            return new JSONObject("{'_id':" + this._id + "}");
         }catch (JSONException e){
             return null;
         }
     }
 
     public RequestParams getParams(){
-        try {
-            RequestParams params = new RequestParams();
-            params.put("_id", this._id);
-            params.put("movies", new JSONArray(this.movies));
-            params.put("books", new JSONArray(this.books));
+        RequestParams params = new RequestParams();
+        params.put("_id", this._id);
 
-            return params;
-        }catch (JSONException e){
-            return null;
-        }
+        return params;
     }
 }
 
