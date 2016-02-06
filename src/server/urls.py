@@ -823,7 +823,7 @@ def movie_delete():
 
 @app.route("/movie/search", methods=['POST', 'OPTIONS'])
 @crossdomain(origin=url)
-def movie_all():
+def movie_search():
     """Get all movies.
 
     Method:
@@ -831,6 +831,7 @@ def movie_all():
 
     Args:
         title: (Optional[int]): Search movies containing the specified title.
+        username: (Optional[int]): Search movies in the user favorites collection.
         limit: (Optional[int]): Limit the total movies returned, default is 10.
         page: (Optional[int]): Especifies the page of movies.
 
@@ -857,6 +858,8 @@ def movie_all():
         try:
             if 'title' in request.json:
                 results, total = dbapi.movies.get_all_by_title(request.json['title'], limit, page)
+            elif 'username' in request.json:
+                results, total = dbapi.movies.get_all_by_username(request.json['username'], limit, page)
             else:
                 results, total = dbapi.movies.get_all(limit, page)
 
