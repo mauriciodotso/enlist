@@ -5,6 +5,8 @@ import com.loopj.android.http.RequestParams;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Stack;
+
 /**
  * Created by nakayama on 1/23/16.
  */
@@ -12,6 +14,7 @@ public class Movie implements Item{
     public String _id;
     public String title;
     public int year;
+    public int status;
 
     public Movie(String title, int year){
         this.title = title;
@@ -22,6 +25,13 @@ public class Movie implements Item{
         this._id = _id;
         this.title = title;
         this.year = year;
+    }
+
+    public Movie(String _id, String title, int year, int status){
+        this._id = _id;
+        this.title = title;
+        this.year = year;
+        this.status = status;
     }
 
     public Movie(JSONObject json) {

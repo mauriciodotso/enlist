@@ -13,6 +13,7 @@ public class Book implements Item{
     public String title;
     public int edition;
     public int year;
+    public int status;
 
     public Book(String _id, String title, int edition, int year){
         this._id = _id;
@@ -25,6 +26,13 @@ public class Book implements Item{
         this.title = title;
         this.edition = edition;
         this.year = year;
+    }
+
+    public Book(String title, int edition, int year, int status){
+        this.title = title;
+        this.edition = edition;
+        this.year = year;
+        this.status = status;
     }
 
     public Book(JSONObject json) {
