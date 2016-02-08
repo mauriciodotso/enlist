@@ -197,7 +197,14 @@ public class UserFacadeTest extends InstrumentationTestCase {
                 .setBody("{'token': 'token'}")
                 .setResponseCode(200);
 
+        MockResponse failResponse = new MockResponse()
+                .addHeader("Content-Type", "application/json; charset=utf-8")
+                .addHeader("Cache-Control", "no-cache")
+                .setBody("{'token': 'token'}")
+                .setResponseCode(404);
+
         server.enqueue(response);
+        server.enqueue(failResponse);
         server.start();
 
         HttpUrl baseUrl = server.url("");
@@ -210,6 +217,10 @@ public class UserFacadeTest extends InstrumentationTestCase {
 
         RecordedRequest request = server.takeRequest();
         assertEquals("/login", request.getPath());
+
+        User failUser = UserFacade.login("user", "password");
+
+        assertEquals(failUser, null);
 
         server.shutdown();
     }

@@ -83,8 +83,8 @@ public class UserFacade {
         return _post(url + "updatemovie", params, 200);
     }
 
-    public static User login(String username, String password){
-        final String[] token = {""};
+    public static User login(final String username, String password){
+        final User[] user = new User[1];
 
         /*params*/
         RequestParams params = new RequestParams();
@@ -97,10 +97,12 @@ public class UserFacade {
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 if(statusCode == 200) {
                     try {
-                        token[0] = response.getString("token");
+                        user[0] = new User(username, response.getString("token"));
                     }catch(JSONException e){
                         //ToDo: handle failure here
                     }
+                }else if(statusCode == 404) {
+                    user[0] = null;
                 }else{
                     //ToDo: handle failure here
                 }
@@ -112,7 +114,7 @@ public class UserFacade {
             }
         });
 
-        return new User(username, token[0]);
+        return user[0];
     }
 
     public static boolean logout(String token){
