@@ -128,7 +128,7 @@ def login():
 
     Raises:
         400: If the login failed.
-        404: If a invalide user os password is passed
+        404: If a invalid user os password is passed
         500: Internal server problem.
     """
     try:
