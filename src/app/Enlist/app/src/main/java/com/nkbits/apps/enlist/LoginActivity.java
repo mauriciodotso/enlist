@@ -11,9 +11,13 @@ import android.widget.EditText;
 import org.bouncycastle.util.encoders.Hex;
 
 import java.security.MessageDigest;
+import java.util.Objects;
 
 public class LoginActivity extends AppCompatActivity {
     private boolean isRegister = false;
+    private EditText emailInput;
+    private EditText passwordInput;
+    private EditText confirmPasswordInput;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,9 +29,9 @@ public class LoginActivity extends AppCompatActivity {
         final Button loginButton = (Button) findViewById(R.id.login_button);
 
         /*EditText*/
-        final EditText emailInput = (EditText) findViewById(R.id.email_input);
-        final EditText passwordInput = (EditText) findViewById(R.id.password_input);
-        final EditText confirmPasswordInput = (EditText) findViewById(R.id.confirm_password_input);
+        emailInput = (EditText) findViewById(R.id.email_input);
+        passwordInput = (EditText) findViewById(R.id.password_input);
+        confirmPasswordInput = (EditText) findViewById(R.id.confirm_password_input);
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,11 +106,14 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private boolean isValidInput(){
-        //ToDo: Implement input validation
         if(isRegister){
-            return true;
+            return !(Objects.equals(emailInput.getText().toString(), "") ||
+                    Objects.equals(passwordInput.getText().toString(), "") ||
+                    Objects.equals(confirmPasswordInput.getText().toString(), "") ||
+                    !Objects.equals(passwordInput.getText().toString(), confirmPasswordInput.getText().toString()));
         }else{
-            return true;
+            return !(Objects.equals(emailInput.getText().toString(), "") ||
+                    Objects.equals(passwordInput.getText().toString(), ""));
         }
     }
 }
