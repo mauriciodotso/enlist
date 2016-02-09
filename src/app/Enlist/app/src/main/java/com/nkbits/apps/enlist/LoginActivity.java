@@ -2,13 +2,15 @@ package com.nkbits.apps.enlist;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+
+import org.bouncycastle.util.encoders.Hex;
+
+import java.security.MessageDigest;
 
 public class LoginActivity extends AppCompatActivity {
     private boolean isRegister = false;
@@ -37,9 +39,8 @@ public class LoginActivity extends AppCompatActivity {
                     isRegister = false;
                 }else{
                     if(isValidInput()) {
-                        //ToDo: Hash password before sending it
                         String email = emailInput.getText().toString();
-                        String password = passwordInput.getText().toString();
+                        String password = hashPassword(passwordInput.getText().toString());
 
                         Session.user = UserFacade.login(email, password);
 
@@ -65,9 +66,8 @@ public class LoginActivity extends AppCompatActivity {
                     isRegister = true;
                 }else{
                     if(isValidInput()) {
-                        //ToDo: Hash password before sending it
                         String email = emailInput.getText().toString();
-                        String password = passwordInput.getText().toString();
+                        String password = hashPassword(passwordInput.getText().toString());
 
                         if(!UserFacade.create(email, password)){
                             Snackbar.make(view, "Failed to register!", Snackbar.LENGTH_LONG)
@@ -87,6 +87,18 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private String hashPassword(String password){
+        try {
+            MessageDigest crypt = MessageDigest.getInstance("SHA-1");
+            crypt.reset();
+            crypt.update(password.getBytes("utf8"));
+
+            return new String(Hex.encode(crypt.digest()));
+        }catch (Exception e){
+            return null;
+        }
     }
 
     private boolean isValidInput(){
