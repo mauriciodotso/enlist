@@ -1,6 +1,7 @@
 package com.nkbits.apps.enlist;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -38,23 +39,12 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if(isRegister) {
                     confirmPasswordInput.setVisibility(View.GONE);
-                    registerButton.setText("Register");
-                    loginButton.setText("Login");
+                    registerButton.setText(R.string.Register);
+                    loginButton.setText(R.string.Login);
                     isRegister = false;
                 }else{
                     if(isValidInput()) {
-                        String email = emailInput.getText().toString();
-                        String password = hashPassword(passwordInput.getText().toString());
-
-                        Session.user = UserFacade.login(email, password);
-
-                        if(Session.user == null){
-                            Snackbar.make(view, "Failed to login!", Snackbar.LENGTH_LONG)
-                                    .setAction("Action", null).show();
-                        }else{
-                            Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
-                            LoginActivity.this.startActivity(myIntent);
-                        }
+                        new SendRequest().execute("Register", emailInput.getText().toString(), hashPassword(passwordInput.getText().toString()));
                     }
                 }
             }
@@ -65,28 +55,12 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if(!isRegister) {
                     confirmPasswordInput.setVisibility(View.VISIBLE);
-                    registerButton.setText("Confirm");
-                    loginButton.setText("Return");
+                    registerButton.setText(R.string.Confirm);
+                    loginButton.setText(R.string.Return);
                     isRegister = true;
                 }else{
                     if(isValidInput()) {
-                        String email = emailInput.getText().toString();
-                        String password = hashPassword(passwordInput.getText().toString());
-
-                        if(!UserFacade.create(email, password)){
-                            Snackbar.make(view, "Failed to register!", Snackbar.LENGTH_LONG)
-                                    .setAction("Action", null).show();
-                        }
-
-                        Session.user = UserFacade.login(email, password);
-
-                        if(Session.user == null){
-                            Snackbar.make(view, "Failed to login!", Snackbar.LENGTH_LONG)
-                                    .setAction("Action", null).show();
-                        }else{
-                            Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
-                            LoginActivity.this.startActivity(myIntent);
-                        }
+                        new SendRequest().execute("Register", emailInput.getText().toString(), hashPassword(passwordInput.getText().toString()));
                     }
                 }
             }
@@ -114,6 +88,43 @@ public class LoginActivity extends AppCompatActivity {
         }else{
             return !(Objects.equals(emailInput.getText().toString(), "") ||
                     Objects.equals(passwordInput.getText().toString(), ""));
+        }
+    }
+
+    class SendRequest extends AsyncTask<String, Void, Boolean> {
+        protected void onPreExecute(){
+            //TODO: Show Loading animation
+        }
+
+        protected Boolean doInBackground(String... option) {
+            String email = option[1];
+            String password = option[2];
+
+            switch(option[0]){
+                case "Register":
+                    if(!UserFacade.create(email, password)){
+                        return false;
+                    }
+                case "Login":
+                    Session.user = UserFacade.login(email, password);
+                    return Session.user == null;
+            }
+
+            return true;
+        }
+
+        protected void onPostExecute(Boolean success){
+            //TODO: Hide Loading animation
+            if(success){
+                Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
+                LoginActivity.this.startActivity(myIntent);
+            }else {
+                if (isRegister){
+                    Snackbar.make(findViewById(R.id.login_layout), "Failed to register!", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                }else{
+                    Snackbar.make(findViewById(R.id.login_layout), "Failed to login!", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                }
+            }
         }
     }
 }
