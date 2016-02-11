@@ -1,5 +1,6 @@
 package com.nkbits.apps.enlist;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -92,10 +93,19 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     class SendRequest extends AsyncTask<String, Void, Boolean> {
+        ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this);
+
+        @Override
         protected void onPreExecute(){
-            //TODO: Show Loading animation
+            super.onPreExecute();
+            progressDialog.setMessage("Loading...");
+            progressDialog.setIndeterminate(false);
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progressDialog.setCancelable(true);
+            progressDialog.show();
         }
 
+        @Override
         protected Boolean doInBackground(String... option) {
             String email = option[1];
             String password = option[2];
@@ -113,8 +123,11 @@ public class LoginActivity extends AppCompatActivity {
             return true;
         }
 
+        @Override
         protected void onPostExecute(Boolean success){
-            //TODO: Hide Loading animation
+            super.onPostExecute(success);
+            progressDialog.dismiss();
+
             if(success){
                 Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
                 LoginActivity.this.startActivity(myIntent);
