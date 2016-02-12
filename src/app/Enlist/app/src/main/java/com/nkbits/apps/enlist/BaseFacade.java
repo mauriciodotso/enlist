@@ -154,6 +154,50 @@ public abstract class BaseFacade<T extends Item> {
         return this.getAll(10, 0);
     }
 
+    protected T[] getAllByUser(int limit, int page, String username){
+        final JSONObject[][] items = new JSONObject[1][1];
+
+        /*params*/
+        RequestParams params = new RequestParams();
+        params.put("limit", limit);
+        params.put("page", page);
+        params.put("username", username);
+
+        /*request*/
+        HTTPRequest.post(url + "search", params, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                if(statusCode == 200) {
+                    try {
+                        JSONArray jsonItems = response.getJSONArray(collection);
+                        items[0] = new JSONObject[jsonItems.length()];
+
+                        for(int i = 0; i < jsonItems.length(); i++){
+                            items[0][i] = jsonItems.getJSONObject(i);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }else{
+                    //ToDo: handle failure here
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable e, JSONObject errorResponse) {
+                //ToDo: handle failure here
+                int a = 0;
+            }
+        });
+
+        return getArray(items[0]);
+    }
+
+
+    protected T[] getAllByUser(String username){
+        return this.getAllByUser(10, 0, username);
+    }
+
     protected T[] searchByTitle(String title, int limit, int page){
         final JSONObject[][] items = new JSONObject[1][1];
 
