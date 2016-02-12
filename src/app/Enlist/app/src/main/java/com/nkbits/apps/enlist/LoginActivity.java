@@ -117,7 +117,7 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 case "Login":
                     Session.user = UserFacade.login(email, password);
-                    return Session.user == null;
+                    return Session.user != null;
             }
 
             return true;
