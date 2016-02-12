@@ -143,4 +143,31 @@ public class MovieFacadeTest extends InstrumentationTestCase {
 
         server.shutdown();
     }
+
+    public void testGetAllByUser() throws Exception{
+        MockWebServer server = new MockWebServer();
+        MockResponse response = new MockResponse()
+                .addHeader("Content-Type", "application/json; charset=utf-8")
+                .addHeader("Cache-Control", "no-cache")
+                .setBody("{movies: [{_id: '507f191e810c19729de860ea', title: 'title', year: 1990}," +
+                        "{_id: '507f191e810c19729de860eb', title1: 'title', year: 1991}," +
+                        "{_id: '507f191e810c19729de860ec', title2: 'title', year: 1992}," +
+                        "{_id: '507f191e810c19729de860ed', title3: 'title', year: 1993}," +
+                        "{_id: '507f191e810c19729de860ee', title4: 'title', year: 1994}], total: 5, limit: 10}");
+
+        server.enqueue(response);
+        server.start();
+
+        HttpUrl baseUrl = server.url("");
+
+        HTTPRequest.setBaseUrl(baseUrl.toString());
+        Movie[] movies = MovieFacade.getAllByUser("user", 10, 0);
+
+        assertEquals(5, movies.length);
+
+        RecordedRequest request = server.takeRequest();
+        assertEquals("/movie/search", request.getPath());
+
+        server.shutdown();
+    }
 }
