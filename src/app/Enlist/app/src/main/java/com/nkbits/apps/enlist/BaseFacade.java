@@ -154,7 +154,7 @@ public abstract class BaseFacade<T extends Item> {
         return this.getAll(10, 0);
     }
 
-    protected T[] getAllByUser(int limit, int page, String username){
+    protected T[] getAllByUser(String username, int limit, int page){
         final JSONObject[][] items = new JSONObject[1][1];
 
         /*params*/
@@ -195,7 +195,7 @@ public abstract class BaseFacade<T extends Item> {
 
 
     protected T[] getAllByUser(String username){
-        return this.getAllByUser(10, 0, username);
+        return this.getAllByUser(username, 10, 0);
     }
 
     protected T[] searchByTitle(String title, int limit, int page){

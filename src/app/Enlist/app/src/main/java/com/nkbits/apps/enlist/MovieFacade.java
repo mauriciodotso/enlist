@@ -28,8 +28,8 @@ public class MovieFacade{
         return facade.getAll();
     }
 
-    public static Movie[] getAllByUser(int limit, int page, String username){
-        return facade.getAllByUser(limit, page, username);
+    public static Movie[] getAllByUser(String username, int limit, int page){
+        return facade.getAllByUser(username, limit, page);
     }
 
     public static Movie[] getAllByUser(String username){

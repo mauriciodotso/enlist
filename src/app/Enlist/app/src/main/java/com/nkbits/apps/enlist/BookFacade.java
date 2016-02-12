@@ -28,8 +28,8 @@ public class BookFacade{
         return facade.getAll();
     }
 
-    public static Book[] getAllByUser(int limit, int page, String username){
-        return facade.getAllByUser(limit, page, username);
+    public static Book[] getAllByUser(String username, int limit, int page){
+        return facade.getAllByUser(username, limit, page);
     }
 
     public static Book[] getAllByUser(String username){
