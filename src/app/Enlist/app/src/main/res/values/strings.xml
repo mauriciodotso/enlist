@@ -10,4 +10,8 @@
     <string name="Return">Return</string>
     <string name="app_moto">Stop clogging your bookmarks</string>
     <string name="title_activity_login">LoginActivity</string>
+    <string name="title">Title</string>
+    <string name="edition">Edition</string>
+    <string name="year">Year</string>
+    <string name="enlist">Enlist</string>
 </resources>
