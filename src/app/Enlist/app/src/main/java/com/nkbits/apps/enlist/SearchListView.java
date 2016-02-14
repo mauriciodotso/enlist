@@ -2,9 +2,12 @@ package com.nkbits.apps.enlist;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ListView;
 
 /**
@@ -13,6 +16,7 @@ import android.widget.ListView;
 public class SearchListView<T> extends Fragment {
     private ListView listView;
     private T data[];
+    private EditText searchInput;
 
     public static final String DATA = "data";
     public static final String VIEW = "view";
@@ -21,6 +25,7 @@ public class SearchListView<T> extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.search_view, container, false);
         ListViewAdapter<T> adapter;
+        searchInput = (EditText)view.findViewById(R.id.search_input);
 
         data = (T[]) getArguments().getSerializable(DATA);
 
@@ -38,6 +43,14 @@ public class SearchListView<T> extends Fragment {
 
         listView = (ListView)view.findViewById(R.id.list_view);
         listView.setAdapter(adapter);
+
+        searchInput.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View view, int key, KeyEvent event) {
+                //ToDo: Search for desired input
+                return false;
+            }
+        });
 
         return view;
     }

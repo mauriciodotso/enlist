@@ -7,7 +7,7 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/search"/>
+        android:id="@+id/search_input"/>
 
     <include
         layout="@layout/list_view"
