@@ -132,20 +132,23 @@ public class MainActivity extends AppCompatActivity
         protected void onPostExecute(Boolean success){
             super.onPostExecute(success);
             progressDialog.dismiss();
-            fragment = new TemplateListView<Book>();
             bundle.putSerializable(TemplateListView.DATA, data);
 
             switch(id){
                 case R.id.nav_my_books:
+                    fragment = new TemplateListView<Book>();
                     bundle.putString(TemplateListView.VIEW, "Book");
                     break;
                 case R.id.nav_my_movies:
+                    fragment = new TemplateListView<Book>();
                     bundle.putString(TemplateListView.VIEW, "Movie");
                     break;
                 case R.id.nav_search_books:
+                    fragment = new SearchListView<>();
                     bundle.putString(TemplateListView.VIEW, "Book");
                     break;
                 case R.id.nav_search_movies:
+                    fragment = new SearchListView<Book>();
                     bundle.putString(TemplateListView.VIEW, "Movie");
                     break;
             }
