@@ -7,12 +7,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Created by nakayama on 1/22/16.
  */
 public class TemplateListView<T> extends Fragment {
     private ListView listView;
-    private T data[];
+    private List<T> data;
 
     public static final String DATA = "data";
     public static final String VIEW = "view";
@@ -22,7 +26,7 @@ public class TemplateListView<T> extends Fragment {
         View view = inflater.inflate(R.layout.list_view, container, false);
         ListViewAdapter<T> adapter;
 
-        data = (T[]) getArguments().getSerializable(DATA);
+        data = Arrays.asList((T[]) getArguments().getSerializable(DATA));
 
         switch (getArguments().getString(VIEW)){
             case "Book":

@@ -12,18 +12,20 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.List;
+
 /**
  * Created by nakayama on 1/23/16.
  */
 public class ListViewAdapter<T> extends ArrayAdapter<T>{
     Context context;
     int layoutResourceId;
-    T data[] = null;
+    List<T> data = null;
     String dataId;
     int status;
     View view;
 
-    public ListViewAdapter(Context context, int layoutResourceId, T[] data) {
+    public ListViewAdapter(Context context, int layoutResourceId, List<T> data) {
         super(context, layoutResourceId, data);
         this.layoutResourceId = layoutResourceId;
         this.context = context;
