@@ -3,7 +3,6 @@ package com.nkbits.apps.enlist;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
@@ -105,12 +104,14 @@ public class ListViewAdapter<T> extends ArrayAdapter<T>{
                     }else{
                         UserFacade.updateBook(Session.user._id, dataId, Session.user.token, 2);
                     }
+                    break;
                 case "Movie":
                     if(status == 0) {
                         UserFacade.addMovie(Session.user._id, dataId, Session.user.token);
                     }else{
                         UserFacade.updateMovie(Session.user._id, dataId, Session.user.token, 2);
                     }
+                    break;
             }
 
             return true;
