@@ -12,6 +12,7 @@ import android.widget.ListView;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -105,17 +106,15 @@ public class TemplateListView<T> extends Fragment {
 
             switch(type){
                 case "Book":
-                    newData = (T[])BookFacade.getAll(10, option[0]);
+                    newData = (T[])BookFacade.getAllByUser(Session.user._id, 10, option[0]);
                     break;
                 case "Movie":
-                    newData = (T[])MovieFacade.getAll(10, option[0]);
+                    newData = (T[])MovieFacade.getAllByUser(Session.user._id, 10, option[0]);
                     break;
             }
 
             if(newData != null) {
-                for (T item : newData) {
-                    data.add(item);
-                }
+                Collections.addAll(data, newData);
             }
 
             return true;
