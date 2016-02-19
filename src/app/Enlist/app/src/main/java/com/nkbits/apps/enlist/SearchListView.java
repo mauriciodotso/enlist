@@ -9,11 +9,15 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by nakayama on 2/3/16.
@@ -23,7 +27,9 @@ public class SearchListView<T> extends Fragment {
     private List<T> data;
     private EditText searchInput;
     private String type;
+    private String input = "";
     private ListViewAdapter<T> adapter;
+    private int currentPage = 0;
 
     public static final String DATA = "data";
     public static final String VIEW = "view";
@@ -51,20 +57,58 @@ public class SearchListView<T> extends Fragment {
 
         listView = (ListView)view.findViewById(R.id.list_view);
         listView.setAdapter(adapter);
+        listView.setOnScrollListener(new EndlessScrollListener(1));
 
         searchInput.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View view, int key, KeyEvent event) {
-                String input = searchInput.getText().toString();
+                input = searchInput.getText().toString();
+                currentPage = 0;
 
-                SendRequest request = new SendRequest();
-                request.execute(type, input);
+                if(Objects.equals(input, "")){
+                    data = new ArrayList<T>();
+                }
+
+                new SendRequest().execute();
 
                 return false;
             }
         });
 
         return view;
+    }
+
+    public class EndlessScrollListener implements AbsListView.OnScrollListener {
+        private int visibleThreshold = 5;
+        private int previousTotal = 0;
+        private boolean loading = true;
+
+        public EndlessScrollListener() {
+        }
+        public EndlessScrollListener(int visibleThreshold) {
+            this.visibleThreshold = visibleThreshold;
+        }
+
+        @Override
+        public void onScroll(AbsListView view, int firstVisibleItem,
+                             int visibleItemCount, int totalItemCount) {
+            if (loading) {
+                if (totalItemCount > previousTotal) {
+                    loading = false;
+                    previousTotal = totalItemCount;
+                    currentPage++;
+                }
+            }
+
+            if (!loading && (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold)) {
+                new SendRequest().execute();
+                loading = true;
+            }
+        }
+
+        @Override
+        public void onScrollStateChanged(AbsListView view, int scrollState) {
+        }
     }
 
     class SendRequest extends AsyncTask<String, Void, Boolean> {
@@ -82,13 +126,27 @@ public class SearchListView<T> extends Fragment {
 
         @Override
         protected Boolean doInBackground(String... option) {
-            switch(option[0]){
+            T[] newData = null;
+
+            switch(type){
                 case "Book":
-                    data = Arrays.asList((T[])BookFacade.searchByTitle(option[1]));
+                    if(Objects.equals(input, "")){
+                        newData = (T[]) BookFacade.getAll(10, currentPage + 1);
+                    }else {
+                        newData = (T[]) BookFacade.searchByTitle(option[0], 10, currentPage + 1);
+                    }
                     break;
                 case "Movie":
-                    data = Arrays.asList((T[])MovieFacade.searchByTitle(option[1]));
+                    if(Objects.equals(input, "")) {
+                        newData = (T[]) MovieFacade.getAll(10, currentPage + 1);
+                    }else{
+                        newData = (T[]) MovieFacade.searchByTitle(option[0], 10, currentPage + 1);
+                    }
                     break;
+            }
+
+            if(newData != null) {
+                Collections.addAll(data, newData);
             }
 
             return true;
