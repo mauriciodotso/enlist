@@ -45,7 +45,7 @@ public class LoginActivity extends AppCompatActivity {
                     isRegister = false;
                 }else{
                     if(isValidInput()) {
-                        new SendRequest().execute("Register", emailInput.getText().toString(), hashPassword(passwordInput.getText().toString()));
+                        new SendRequest().execute("Login", emailInput.getText().toString(), hashPassword(passwordInput.getText().toString()));
                     }
                 }
             }
