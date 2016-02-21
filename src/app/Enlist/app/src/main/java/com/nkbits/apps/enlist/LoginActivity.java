@@ -101,7 +101,7 @@ public class LoginActivity extends AppCompatActivity {
             progressDialog.setMessage("Loading...");
             progressDialog.setIndeterminate(false);
             progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            progressDialog.setCancelable(true);
+            progressDialog.setCancelable(false);
             progressDialog.show();
         }
 
