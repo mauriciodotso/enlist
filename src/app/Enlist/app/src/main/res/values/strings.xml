@@ -14,4 +14,10 @@
     <string name="edition">Edition</string>
     <string name="year">Year</string>
     <string name="enlist">Enlist</string>
+    <string name="my_books">My Books</string>
+    <string name="my_movies">My Movies</string>
+    <string name="search">Search</string>
+    <string name="books">Books</string>
+    <string name="movies">Movies</string>
+    <string name="admin">Admin</string>
 </resources>
