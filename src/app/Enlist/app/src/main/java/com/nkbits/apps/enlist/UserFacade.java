@@ -138,6 +138,7 @@ public class UserFacade {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable e, JSONObject errorResponse) {
+                success[0] = false;
                 //ToDo: handle failure here
             }
         });
