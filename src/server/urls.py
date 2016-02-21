@@ -12,6 +12,7 @@ import hashlib
 
 app = Flask(__name__)
 
+host="192.168.25.58"
 url = "*"
 dbapi = DBAPI()
 
@@ -177,7 +178,7 @@ def logout():
 #User API#
 ##########
 @app.route("/user/create", methods=['POST', 'OPTIONS'])
-@crossdomain(origin='http://locahost:3000')
+@crossdomain(origin=url)
 def user_create():
     """Creates a user.
 
@@ -876,4 +877,4 @@ def movie_search():
         return "Error! Maybe missing args.", 400
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host=host)
