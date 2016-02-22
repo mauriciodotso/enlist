@@ -139,16 +139,16 @@ public class MainActivity extends AppCompatActivity
                     bundle.putString(TemplateListView.VIEW, "Book");
                     break;
                 case R.id.nav_my_movies:
-                    fragment = new TemplateListView<Book>();
+                    fragment = new TemplateListView<Movie>();
                     bundle.putString(TemplateListView.VIEW, "Movie");
                     break;
                 case R.id.nav_search_books:
-                    fragment = new SearchListView<>();
-                    bundle.putString(TemplateListView.VIEW, "Book");
+                    fragment = new SearchListView<Book>();
+                    bundle.putString(SearchListView.VIEW, "Book");
                     break;
                 case R.id.nav_search_movies:
-                    fragment = new SearchListView<Book>();
-                    bundle.putString(TemplateListView.VIEW, "Movie");
+                    fragment = new SearchListView<Movie>();
+                    bundle.putString(SearchListView.VIEW, "Movie");
                     break;
             }
 
