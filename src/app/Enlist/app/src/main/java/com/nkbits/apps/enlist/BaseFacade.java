@@ -143,7 +143,7 @@ public abstract class BaseFacade<T extends Item> {
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable e, JSONObject errorResponse) {
                 //ToDo: handle failure here
-                int a = 0;
+                items[0] = new JSONObject[0];
             }
         });
 
