@@ -224,7 +224,7 @@ def user_get():
         POST
 
     Args:
-        username (int): User's username
+        username (string): User's username
         token (str): User's session token
 
     Returns:
@@ -408,7 +408,7 @@ def user_update_book():
             return jsonify(message="Couldn't find the specified book!"), 404
 
         try:
-            dbapi.users.update_book(request.json['username'], ObjectId(request.json['book_id']), request.json['status'])
+            dbapi.users.update_book(request.json['username'], ObjectId(request.json['book_id']), int(request.json['status']))
         except Exception:
             return jsonify(message="We had a problem processing your request! Try again later."), 500
 
@@ -502,7 +502,7 @@ def user_update_movie():
             return jsonify(message="Couldn't find the specified movie!"), 404
 
         try:
-            dbapi.users.update_movie(request.json['username'], ObjectId(request.json['movie_id']), request.json['status'])
+            dbapi.users.update_movie(request.json['username'], ObjectId(request.json['movie_id']), int(request.json['status']))
         except Exception:
             return jsonify(message="We had a problem processing your request! Try again later."), 500
 
@@ -542,7 +542,7 @@ def book_create():
 
         #ToDo: Check if title and edition already exists.
 
-        book = {'title': request.json['title'], 'year': request.json['year'], 'edition': request.json['edition'], 'cover': request.json['cover']}
+        book = {'title': request.json['title'], 'year': request.json['year'], 'edition': int(request.json['edition']), 'cover': request.json['cover']}
 
         try:
             _id = dbapi.books.insert(book).inserted_id
@@ -649,8 +649,8 @@ def book_search():
         POST
 
     Args:
-        title: (Optional[int]): Search books containing the specified title.
-        username: (Optional[int]): Search books in the user favorites collection.
+        title: (Optional[string]): Search books containing the specified title.
+        username: (Optional[string]): Search books in the user favorites collection.
         limit: (Optional[int]): Limit the total books returned, default is 10.
         page: (Optional[int]): Especifies the page of books.
 
@@ -669,10 +669,10 @@ def book_search():
         limit = 10
 
         if 'page' in request.json:
-            page = request.json['page']
+            page = int(request.json['page'])
 
         if 'limit' in request.json:
-            limit = request.json['limit']
+            limit = int(request.json['limit'])
 
         try:
             if 'title' in request.json:
@@ -831,8 +831,8 @@ def movie_search():
         POST
 
     Args:
-        title: (Optional[int]): Search movies containing the specified title.
-        username: (Optional[int]): Search movies in the user favorites collection.
+        title: (Optional[string]): Search movies containing the specified title.
+        username: (Optional[string]): Search movies in the user favorites collection.
         limit: (Optional[int]): Limit the total movies returned, default is 10.
         page: (Optional[int]): Especifies the page of movies.
 
@@ -851,10 +851,10 @@ def movie_search():
         limit = 10
 
         if 'page' in request.json:
-            page = request.json['page']
+            page = int(request.json['page'])
 
         if 'limit' in request.json:
-            limit = request.json['limit']
+            limit = int(request.json['limit'])
 
         try:
             if 'title' in request.json:
