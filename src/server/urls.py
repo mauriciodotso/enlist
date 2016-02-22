@@ -678,7 +678,7 @@ def book_search():
             if 'title' in request.json:
                 results, total = dbapi.books.get_all_by_title(request.json['title'], limit, page)
             elif 'username' in request.json:
-                results, total = dbapi.books.get_all_by_username(request.json['username'], limit, page)
+                results, total = dbapi.books.get_all_by_user(request.json['username'], limit, page)
             else:
                 results, total = dbapi.books.get_all(limit, page)
 
@@ -860,7 +860,7 @@ def movie_search():
             if 'title' in request.json:
                 results, total = dbapi.movies.get_all_by_title(request.json['title'], limit, page)
             elif 'username' in request.json:
-                results, total = dbapi.movies.get_all_by_username(request.json['username'], limit, page)
+                results, total = dbapi.movies.get_all_by_user(request.json['username'], limit, page)
             else:
                 results, total = dbapi.movies.get_all(limit, page)
 
