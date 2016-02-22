@@ -48,11 +48,11 @@ public class ListViewAdapter<T> extends ArrayAdapter<T>{
 
         switch (layoutResourceId){
             case R.layout.book_view:
-                Book book = (Book)getItem(position);
+                final Book book = (Book)getItem(position);
                 TextView editionText = (TextView) convertView.findViewById(R.id.edition_text);
                 titleText.setText(book.title);
-                yearText.setText(book.year);
-                editionText.setText(book.edition);
+                yearText.setText(Integer.toString(book.year));
+                editionText.setText(Integer.toString(book.edition));
                 this.dataId = book._id;
                 this.status = book.status;
 
@@ -60,14 +60,14 @@ public class ListViewAdapter<T> extends ArrayAdapter<T>{
                     @Override
                     public void onClick(View v) {
                         SendRequest request = new SendRequest();
-                        request.execute("Book");
+                        request.execute("Book", book._id);
                     }
                 });
                 break;
             case R.layout.movie_view:
-                Movie movie = (Movie)getItem(position);
+                final Movie movie = (Movie)getItem(position);
                 titleText.setText(movie.title);
-                yearText.setText(movie.year);
+                yearText.setText(Integer.toString(movie.year));
                 this.dataId = movie._id;
                 this.status = movie.status;
 
@@ -75,7 +75,7 @@ public class ListViewAdapter<T> extends ArrayAdapter<T>{
                     @Override
                     public void onClick(View v) {
                         SendRequest request = new SendRequest();
-                        request.execute("Movie");
+                        request.execute("Movie", movie._id);
                     }
                 });
                 break;
@@ -102,16 +102,16 @@ public class ListViewAdapter<T> extends ArrayAdapter<T>{
             switch(option[0]){
                 case "Book":
                     if(status == 0) {
-                        UserFacade.addBook(Session.user._id, dataId, Session.user.token);
+                        UserFacade.addBook(Session.user._id, option[1], Session.user.token);
                     }else{
-                        UserFacade.updateBook(Session.user._id, dataId, Session.user.token, 2);
+                        UserFacade.updateBook(Session.user._id, option[1], Session.user.token, 2);
                     }
                     break;
                 case "Movie":
                     if(status == 0) {
-                        UserFacade.addMovie(Session.user._id, dataId, Session.user.token);
+                        UserFacade.addMovie(Session.user._id, option[1], Session.user.token);
                     }else{
-                        UserFacade.updateMovie(Session.user._id, dataId, Session.user.token, 2);
+                        UserFacade.updateMovie(Session.user._id, option[1], Session.user.token, 2);
                     }
                     break;
             }
