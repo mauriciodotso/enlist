@@ -4,8 +4,8 @@ import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
-import android.view.KeyEvent;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,9 +59,8 @@ public class SearchListView<T> extends Fragment {
         listView.setAdapter(adapter);
         listView.setOnScrollListener(new EndlessScrollListener(1));
 
-        searchInput.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View view, int key, KeyEvent event) {
+        searchInput.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {
                 input = searchInput.getText().toString();
                 currentPage = 0;
 
@@ -70,8 +69,13 @@ public class SearchListView<T> extends Fragment {
                 }
 
                 new SendRequest().execute();
+            }
 
-                return false;
+            public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
+
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
             }
         });
 
@@ -133,14 +137,14 @@ public class SearchListView<T> extends Fragment {
                     if(Objects.equals(input, "")){
                         newData = (T[]) BookFacade.getAll(10, currentPage + 1);
                     }else {
-                        newData = (T[]) BookFacade.searchByTitle(option[0], 10, currentPage + 1);
+                        newData = (T[]) BookFacade.searchByTitle(input, 10, currentPage + 1);
                     }
                     break;
                 case "Movie":
                     if(Objects.equals(input, "")) {
                         newData = (T[]) MovieFacade.getAll(10, currentPage + 1);
                     }else{
-                        newData = (T[]) MovieFacade.searchByTitle(option[0], 10, currentPage + 1);
+                        newData = (T[]) MovieFacade.searchByTitle(input, 10, currentPage + 1);
                     }
                     break;
             }
