@@ -85,6 +85,10 @@ public class ListViewAdapter<T> extends ArrayAdapter<T>{
         return convertView;
     }
 
+    public void clear(){
+        this.data.clear();
+    }
+
     public void update(ArrayList<T> data){
         this.data = data;
         this.notifyDataSetChanged();

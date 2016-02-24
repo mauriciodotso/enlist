@@ -32,12 +32,13 @@ public class SearchListView<T> extends Fragment {
     private ListViewAdapter<T> adapter;
     private int currentPage = 0;
     private int previousTotal = 0;
+    private boolean loading = false;
 
     public static final String DATA = "data";
     public static final String VIEW = "view";
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.search_view, container, false);
 
         searchInput = (EditText)view.findViewById(R.id.search_input);
@@ -65,14 +66,16 @@ public class SearchListView<T> extends Fragment {
             public void afterTextChanged(Editable s) {
                 previousInput = input;
                 input = searchInput.getText().toString();
-                currentPage = 0;
-                previousTotal = 0;
 
-                if(!Objects.equals(input, "") || (!Objects.equals(previousInput, "") && Objects.equals(input, ""))) {
-                    data = new ArrayList<T>();
+                if(!Objects.equals(previousInput, input)) {
+                    currentPage = 0;
+                    previousTotal = 0;
+                    loading = true;
+
+                    adapter.clear();
+
+                    new SendRequest().execute();
                 }
-
-                new SendRequest().execute();
             }
 
             public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
@@ -88,7 +91,6 @@ public class SearchListView<T> extends Fragment {
 
     public class EndlessScrollListener implements AbsListView.OnScrollListener {
         private int visibleThreshold = 5;
-        private boolean loading = false;
 
         public EndlessScrollListener() {
         }
@@ -106,7 +108,7 @@ public class SearchListView<T> extends Fragment {
                 }
             }
 
-            if (!loading && (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold)) {
+            if (!loading && (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold) && (totalItemCount - visibleItemCount) != 0) {
                 currentPage++;
                 new SendRequest().execute();
                 loading = true;
@@ -124,11 +126,14 @@ public class SearchListView<T> extends Fragment {
         @Override
         protected void onPreExecute(){
             super.onPreExecute();
-            progressDialog.setMessage("Loading...");
-            progressDialog.setIndeterminate(false);
-            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            progressDialog.setCancelable(true);
-            progressDialog.show();
+
+            if(!Objects.equals(input, "")) {
+                progressDialog.setMessage("Loading...");
+                progressDialog.setIndeterminate(false);
+                progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                progressDialog.setCancelable(true);
+                progressDialog.show();
+            }
         }
 
         @Override
@@ -158,13 +163,17 @@ public class SearchListView<T> extends Fragment {
                 }
             }
 
+            previousTotal = data.size();
+
             return true;
         }
 
         @Override
         protected void onPostExecute(Boolean success){
             super.onPostExecute(success);
-            progressDialog.dismiss();
+            if(!Objects.equals(input, "")) {
+                progressDialog.dismiss();
+            }
             adapter.update(data);
         }
     }
