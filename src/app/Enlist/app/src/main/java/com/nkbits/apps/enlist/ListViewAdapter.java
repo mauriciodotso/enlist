@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,12 +21,12 @@ import java.util.List;
 public class ListViewAdapter<T> extends ArrayAdapter<T>{
     Context context;
     int layoutResourceId;
-    List<T> data = null;
+    ArrayList<T> data = null;
     String dataId;
     int status;
     View view;
 
-    public ListViewAdapter(Context context, int layoutResourceId, List<T> data) {
+    public ListViewAdapter(Context context, int layoutResourceId, ArrayList<T> data) {
         super(context, layoutResourceId, data);
         this.layoutResourceId = layoutResourceId;
         this.context = context;
@@ -82,6 +83,11 @@ public class ListViewAdapter<T> extends ArrayAdapter<T>{
         }
 
         return convertView;
+    }
+
+    public void update(ArrayList<T> data){
+        this.data = data;
+        this.notifyDataSetChanged();
     }
 
     class SendRequest extends AsyncTask<String, Void, Boolean> {

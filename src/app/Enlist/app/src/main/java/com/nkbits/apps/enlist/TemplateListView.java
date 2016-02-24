@@ -11,6 +11,7 @@ import android.widget.AbsListView;
 import android.widget.ListView;
 
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -20,7 +21,7 @@ import java.util.List;
  */
 public class TemplateListView<T> extends Fragment {
     private ListView listView;
-    private List<T> data;
+    private ArrayList<T> data;
     private ListViewAdapter<T> adapter;
     private String type;
 
@@ -31,7 +32,7 @@ public class TemplateListView<T> extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.list_view, container, false);
 
-        data = Arrays.asList((T[]) getArguments().getSerializable(DATA));
+        data = new ArrayList<T>(Arrays.asList((T[]) getArguments().getSerializable(DATA)));
         type = getArguments().getString(VIEW);
 
         switch (type){
@@ -124,7 +125,7 @@ public class TemplateListView<T> extends Fragment {
         protected void onPostExecute(Boolean success){
             super.onPostExecute(success);
             progressDialog.dismiss();
-            adapter.notifyDataSetChanged();
+            adapter.update(data);
         }
     }
 }

@@ -24,12 +24,14 @@ import java.util.Objects;
  */
 public class SearchListView<T> extends Fragment {
     private ListView listView;
-    private List<T> data;
+    private ArrayList<T> data;
     private EditText searchInput;
     private String type;
     private String input = "";
+    private String previousInput = "";
     private ListViewAdapter<T> adapter;
     private int currentPage = 0;
+    private int previousTotal = 0;
 
     public static final String DATA = "data";
     public static final String VIEW = "view";
@@ -41,7 +43,7 @@ public class SearchListView<T> extends Fragment {
         searchInput = (EditText)view.findViewById(R.id.search_input);
         type = getArguments().getString(VIEW);
 
-        data = Arrays.asList((T[]) getArguments().getSerializable(DATA));
+        data = new ArrayList<T>(Arrays.asList((T[]) getArguments().getSerializable(DATA)));
 
         switch (type){
             case "Book":
@@ -57,14 +59,18 @@ public class SearchListView<T> extends Fragment {
 
         listView = (ListView)view.findViewById(R.id.list_view);
         listView.setAdapter(adapter);
-        listView.setOnScrollListener(new EndlessScrollListener(5));
+        listView.setOnScrollListener(new EndlessScrollListener(2));
 
         searchInput.addTextChangedListener(new TextWatcher() {
             public void afterTextChanged(Editable s) {
+                previousInput = input;
                 input = searchInput.getText().toString();
                 currentPage = 0;
+                previousTotal = 0;
 
-                data = new ArrayList<T>();
+                if(!Objects.equals(input, "") || (!Objects.equals(previousInput, "") && Objects.equals(input, ""))) {
+                    data = new ArrayList<T>();
+                }
 
                 new SendRequest().execute();
             }
@@ -82,7 +88,6 @@ public class SearchListView<T> extends Fragment {
 
     public class EndlessScrollListener implements AbsListView.OnScrollListener {
         private int visibleThreshold = 5;
-        private int previousTotal = 0;
         private boolean loading = false;
 
         public EndlessScrollListener() {
@@ -160,7 +165,7 @@ public class SearchListView<T> extends Fragment {
         protected void onPostExecute(Boolean success){
             super.onPostExecute(success);
             progressDialog.dismiss();
-            adapter.notifyDataSetChanged();
+            adapter.update(data);
         }
     }
 }
