@@ -57,16 +57,14 @@ public class SearchListView<T> extends Fragment {
 
         listView = (ListView)view.findViewById(R.id.list_view);
         listView.setAdapter(adapter);
-        listView.setOnScrollListener(new EndlessScrollListener(1));
+        listView.setOnScrollListener(new EndlessScrollListener(5));
 
         searchInput.addTextChangedListener(new TextWatcher() {
             public void afterTextChanged(Editable s) {
                 input = searchInput.getText().toString();
                 currentPage = 0;
 
-                if(Objects.equals(input, "")){
-                    data = new ArrayList<T>();
-                }
+                data = new ArrayList<T>();
 
                 new SendRequest().execute();
             }
@@ -85,7 +83,7 @@ public class SearchListView<T> extends Fragment {
     public class EndlessScrollListener implements AbsListView.OnScrollListener {
         private int visibleThreshold = 5;
         private int previousTotal = 0;
-        private boolean loading = true;
+        private boolean loading = false;
 
         public EndlessScrollListener() {
         }
@@ -100,11 +98,11 @@ public class SearchListView<T> extends Fragment {
                 if (totalItemCount > previousTotal) {
                     loading = false;
                     previousTotal = totalItemCount;
-                    currentPage++;
                 }
             }
 
             if (!loading && (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold)) {
+                currentPage++;
                 new SendRequest().execute();
                 loading = true;
             }
@@ -135,22 +133,24 @@ public class SearchListView<T> extends Fragment {
             switch(type){
                 case "Book":
                     if(Objects.equals(input, "")){
-                        newData = (T[]) BookFacade.getAll(10, currentPage + 1);
+                        newData = (T[]) BookFacade.getAll(10, currentPage);
                     }else {
-                        newData = (T[]) BookFacade.searchByTitle(input, 10, currentPage + 1);
+                        newData = (T[]) BookFacade.searchByTitle(input, 10, currentPage);
                     }
                     break;
                 case "Movie":
                     if(Objects.equals(input, "")) {
-                        newData = (T[]) MovieFacade.getAll(10, currentPage + 1);
+                        newData = (T[]) MovieFacade.getAll(10, currentPage);
                     }else{
-                        newData = (T[]) MovieFacade.searchByTitle(input, 10, currentPage + 1);
+                        newData = (T[]) MovieFacade.searchByTitle(input, 10, currentPage);
                     }
                     break;
             }
 
             if(newData != null) {
-                Collections.addAll(data, newData);
+                for(T item : newData){
+                    data.add(item);
+                }
             }
 
             return true;
