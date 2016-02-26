@@ -20,14 +20,14 @@ public class Book implements Item{
         this.title = title;
         this.edition = edition;
         this.year = year;
-        this.status = 0;
+        this.status = -1;
     }
 
     public Book(String title, int edition, int year){
         this.title = title;
         this.edition = edition;
         this.year = year;
-        this.status = 0;
+        this.status = -1;
     }
 
     public Book(String title, int edition, int year, int status){

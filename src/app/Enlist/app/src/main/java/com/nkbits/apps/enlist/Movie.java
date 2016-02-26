@@ -19,14 +19,14 @@ public class Movie implements Item{
     public Movie(String title, int year){
         this.title = title;
         this.year = year;
-        this.status = 0;
+        this.status = -1;
     }
 
     public Movie(String _id, String title, int year){
         this._id = _id;
         this.title = title;
         this.year = year;
-        this.status = 0;
+        this.status = -1;
     }
 
     public Movie(String _id, String title, int year, int status){
