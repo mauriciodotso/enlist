@@ -57,6 +57,12 @@ public class ListViewAdapter<T> extends ArrayAdapter<T>{
                 this.dataId = book._id;
                 this.status = book.status;
 
+                if(this.status == 1){
+                    actionButton.setText("Read");
+                }else if(this.status == 2){
+                    actionButton.setVisibility(View.GONE);
+                }
+
                 actionButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -71,6 +77,12 @@ public class ListViewAdapter<T> extends ArrayAdapter<T>{
                 yearText.setText(Integer.toString(movie.year));
                 this.dataId = movie._id;
                 this.status = movie.status;
+
+                if(this.status == 1){
+                    actionButton.setText("Viewed");
+                }else if(this.status == 2){
+                    actionButton.setVisibility(View.GONE);
+                }
 
                 actionButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -136,15 +148,15 @@ public class ListViewAdapter<T> extends ArrayAdapter<T>{
 
             if(success){
                 if(status == 0) {
-                    Snackbar.make(view.findViewById(R.id.list_view), "Item added to your list!", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+//                    Snackbar.make(view.findViewById(R.id.list_view), "Item added to your list!", Snackbar.LENGTH_LONG).setAction("Action", null).show();
                 }else{
-                    Snackbar.make(view.findViewById(R.id.list_view), "Item updated!", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+//                    Snackbar.make(view.findViewById(R.id.list_view), "Item updated!", Snackbar.LENGTH_LONG).setAction("Action", null).show();
                 }
             }else {
                 if(status == 0) {
-                    Snackbar.make(view.findViewById(R.id.list_view), "Failed to add to your list!", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+//                    Snackbar.make(view.findViewById(R.id.list_view), "Failed to add to your list!", Snackbar.LENGTH_LONG).setAction("Action", null).show();
                 }else {
-                    Snackbar.make(view.findViewById(R.id.list_view), "Failed to update!", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+//                    Snackbar.make(view.findViewById(R.id.list_view), "Failed to update!", Snackbar.LENGTH_LONG).setAction("Action", null).show();
                 }
             }
         }
