@@ -57,9 +57,9 @@ public class ListViewAdapter<T> extends ArrayAdapter<T>{
                 this.dataId = book._id;
                 this.status = book.status;
 
-                if(this.status == 1){
+                if(this.status == 0){
                     actionButton.setText("Read");
-                }else if(this.status == 2){
+                }else if(this.status == 1){
                     actionButton.setVisibility(View.GONE);
                 }
 
@@ -78,9 +78,9 @@ public class ListViewAdapter<T> extends ArrayAdapter<T>{
                 this.dataId = movie._id;
                 this.status = movie.status;
 
-                if(this.status == 1){
+                if(this.status == 0){
                     actionButton.setText("Viewed");
-                }else if(this.status == 2){
+                }else if(this.status == 1){
                     actionButton.setVisibility(View.GONE);
                 }
 
@@ -123,17 +123,17 @@ public class ListViewAdapter<T> extends ArrayAdapter<T>{
         protected Boolean doInBackground(String... option) {
             switch(option[0]){
                 case "Book":
-                    if(status == 0) {
+                    if(status == -1) {
                         UserFacade.addBook(Session.user._id, option[1], Session.user.token);
                     }else{
-                        UserFacade.updateBook(Session.user._id, option[1], Session.user.token, 2);
+                        UserFacade.updateBook(Session.user._id, option[1], Session.user.token, 1);
                     }
                     break;
                 case "Movie":
-                    if(status == 0) {
+                    if(status == -1) {
                         UserFacade.addMovie(Session.user._id, option[1], Session.user.token);
                     }else{
-                        UserFacade.updateMovie(Session.user._id, option[1], Session.user.token, 2);
+                        UserFacade.updateMovie(Session.user._id, option[1], Session.user.token, 1);
                     }
                     break;
             }
