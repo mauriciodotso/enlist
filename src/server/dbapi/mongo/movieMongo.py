@@ -35,7 +35,12 @@ class MovieMongo(BaseMongo, MovieDAO):
 
     def get_all_by_user(self, user_id, limit=10, offset=0):
         try:
-            movies = self.database.users.find_one({'_id': user_id}, {'_id': 0, 'movies._id': 1})['movies']
+            movies = self.database.users.find_one({'_id': user_id}, {'_id': 0, 'movies._id': 1, 'movies.status': 1})['movies']
+            status = {}
+
+            for movie in movies:
+                status[movie['_id']] = movie['status']
+
             movies = [movie['_id'] for movie in movies]
 
             cursor = self.table.find({'_id': {'$in': movies}}).sort('title', pymongo.ASCENDING).limit(limit).skip(offset*limit)
@@ -43,6 +48,7 @@ class MovieMongo(BaseMongo, MovieDAO):
             result = []
 
             for movie in cursor:
+                movie['status'] = status[movie['_id']]
                 result.append(movie)
 
             return result, total
