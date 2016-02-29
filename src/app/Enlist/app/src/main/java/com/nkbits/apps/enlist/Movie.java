@@ -41,6 +41,12 @@ public class Movie implements Item{
             this._id = json.getString("_id");
             this.title = json.getString("title");
             this.year = json.getInt("year");
+
+            if(json.has("status")) {
+                this.status = json.getInt("status");
+            }else{
+                this.status = -1;
+            }
         } catch (JSONException e) {
             //ToDo: Handle exception
         }

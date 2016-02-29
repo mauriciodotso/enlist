@@ -43,6 +43,12 @@ public class Book implements Item{
             this.title = json.getString("title");
             this.edition = json.getInt("edition");
             this.year = json.getInt("year");
+
+            if(json.has("status")) {
+                this.status = json.getInt("status");
+            }else{
+                this.status = -1;
+            }
         } catch (JSONException e) {
             //ToDo: Handle exception
         }
