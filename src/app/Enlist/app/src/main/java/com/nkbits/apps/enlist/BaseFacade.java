@@ -134,10 +134,10 @@ public abstract class BaseFacade<T extends Item> {
                         }
 
                         switch (collection){
-                            case "Book":
+                            case "books":
                                 Session.totalBooks = response.getInt("total");
                                 break;
-                            case "Movie":
+                            case "movies":
                                 Session.totalMovies = response.getInt("total");
                                 break;
                         }
@@ -187,10 +187,10 @@ public abstract class BaseFacade<T extends Item> {
                         }
 
                         switch (collection){
-                            case "Book":
+                            case "books":
                                 Session.totalUserBooks = response.getInt("total");
                                 break;
-                            case "Movie":
+                            case "movies":
                                 Session.totalUserMovies = response.getInt("total");
                                 break;
                         }
