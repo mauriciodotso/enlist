@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by nakayama on 1/23/16.
@@ -23,7 +24,6 @@ public class ListViewAdapter<T> extends ArrayAdapter<T>{
     int layoutResourceId;
     ArrayList<T> data = null;
     String dataId;
-    int status;
     View view;
 
     public ListViewAdapter(Context context, int layoutResourceId, ArrayList<T> data) {
@@ -46,6 +46,7 @@ public class ListViewAdapter<T> extends ArrayAdapter<T>{
         TextView titleText = (TextView) convertView.findViewById(R.id.title_text);
         TextView yearText = (TextView) convertView.findViewById(R.id.year_text);
         Button actionButton = (Button) convertView.findViewById(R.id.action_button);
+        final String action;
 
         switch (layoutResourceId){
             case R.layout.book_view:
@@ -55,19 +56,23 @@ public class ListViewAdapter<T> extends ArrayAdapter<T>{
                 yearText.setText(Integer.toString(book.year));
                 editionText.setText(Integer.toString(book.edition));
                 this.dataId = book._id;
-                this.status = book.status;
 
-                if(this.status == 0){
+                if(book.status == 0){
                     actionButton.setText("Read");
-                }else if(this.status == 1){
+                    actionButton.setVisibility(View.VISIBLE);
+                    action = "update";
+                }else if(book.status == 1){
                     actionButton.setVisibility(View.GONE);
+                    action = "nothing";
+                }else{
+                    action = "add";
                 }
 
                 actionButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         SendRequest request = new SendRequest();
-                        request.execute("Book", book._id);
+                        request.execute("Book", book._id, action);
                     }
                 });
                 break;
@@ -76,19 +81,22 @@ public class ListViewAdapter<T> extends ArrayAdapter<T>{
                 titleText.setText(movie.title);
                 yearText.setText(Integer.toString(movie.year));
                 this.dataId = movie._id;
-                this.status = movie.status;
 
-                if(this.status == 0){
+                if(movie.status == 0){
                     actionButton.setText("Viewed");
-                }else if(this.status == 1){
+                    action = "update";
+                }else if(movie.status == 1){
                     actionButton.setVisibility(View.GONE);
+                    action = "nothing";
+                }else{
+                    action = "add";
                 }
 
                 actionButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         SendRequest request = new SendRequest();
-                        request.execute("Movie", movie._id);
+                        request.execute("Movie", movie._id, action);
                     }
                 });
                 break;
@@ -123,14 +131,14 @@ public class ListViewAdapter<T> extends ArrayAdapter<T>{
         protected Boolean doInBackground(String... option) {
             switch(option[0]){
                 case "Book":
-                    if(status == -1) {
+                    if(Objects.equals(option[2], "add")) {
                         UserFacade.addBook(Session.user._id, option[1], Session.user.token);
                     }else{
                         UserFacade.updateBook(Session.user._id, option[1], Session.user.token, 1);
                     }
                     break;
                 case "Movie":
-                    if(status == -1) {
+                    if(Objects.equals(option[2], "add")) {
                         UserFacade.addMovie(Session.user._id, option[1], Session.user.token);
                     }else{
                         UserFacade.updateMovie(Session.user._id, option[1], Session.user.token, 1);
@@ -146,19 +154,19 @@ public class ListViewAdapter<T> extends ArrayAdapter<T>{
             super.onPostExecute(success);
             progressDialog.dismiss();
 
-            if(success){
-                if(status == 0) {
-//                    Snackbar.make(view.findViewById(R.id.list_view), "Item added to your list!", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                }else{
-//                    Snackbar.make(view.findViewById(R.id.list_view), "Item updated!", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                }
-            }else {
-                if(status == 0) {
-//                    Snackbar.make(view.findViewById(R.id.list_view), "Failed to add to your list!", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                }else {
-//                    Snackbar.make(view.findViewById(R.id.list_view), "Failed to update!", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                }
-            }
+//            if(success){
+//                if(status == 0) {
+////                    Snackbar.make(view.findViewById(R.id.list_view), "Item added to your list!", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+//                }else{
+////                    Snackbar.make(view.findViewById(R.id.list_view), "Item updated!", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+//                }
+//            }else {
+//                if(status == 0) {
+////                    Snackbar.make(view.findViewById(R.id.list_view), "Failed to add to your list!", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+//                }else {
+////                    Snackbar.make(view.findViewById(R.id.list_view), "Failed to update!", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+//                }
+//            }
         }
     }
 }
