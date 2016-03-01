@@ -5,4 +5,8 @@ package com.nkbits.apps.enlist;
  */
 public class Session {
     public static User user;
+    public static int totalBooks = 0;
+    public static int totalUserBooks = 0;
+    public static int totalMovies = 0;
+    public static int totalUserMovies = 0;
 }
