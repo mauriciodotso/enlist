@@ -132,6 +132,16 @@ public abstract class BaseFacade<T extends Item> {
                         for(int i = 0; i < jsonItems.length(); i++){
                             items[0][i] = jsonItems.getJSONObject(i);
                         }
+
+                        switch (collection){
+                            case "Book":
+                                Session.totalBooks = response.getInt("total");
+                                break;
+                            case "Movie":
+                                Session.totalMovies = response.getInt("total");
+                                break;
+                        }
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -174,6 +184,15 @@ public abstract class BaseFacade<T extends Item> {
 
                         for(int i = 0; i < jsonItems.length(); i++){
                             items[0][i] = jsonItems.getJSONObject(i);
+                        }
+
+                        switch (collection){
+                            case "Book":
+                                Session.totalUserBooks = response.getInt("total");
+                                break;
+                            case "Movie":
+                                Session.totalUserMovies = response.getInt("total");
+                                break;
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
