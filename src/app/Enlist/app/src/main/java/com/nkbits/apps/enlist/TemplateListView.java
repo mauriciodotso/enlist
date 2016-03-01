@@ -20,10 +20,11 @@ import java.util.List;
  * Created by nakayama on 1/22/16.
  */
 public class TemplateListView<T> extends Fragment {
-    private ListView listView;
-    private ArrayList<T> data;
-    private ListViewAdapter<T> adapter;
-    private String type;
+    protected ListView listView;
+    protected ArrayList<T> data;
+    protected ListViewAdapter<T> adapter;
+    protected String type;
+    protected int limit = 10;
 
     public static final String DATA = "data";
     public static final String VIEW = "view";
@@ -54,7 +55,7 @@ public class TemplateListView<T> extends Fragment {
         return view;
     }
 
-    public class EndlessScrollListener implements AbsListView.OnScrollListener {
+    protected class EndlessScrollListener implements AbsListView.OnScrollListener {
         private int visibleThreshold = 5;
         private int currentPage = 0;
         private int previousTotal = 0;
@@ -67,18 +68,19 @@ public class TemplateListView<T> extends Fragment {
         }
 
         @Override
-        public void onScroll(AbsListView view, int firstVisibleItem,
-                             int visibleItemCount, int totalItemCount) {
+        public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+            int total = getTotal();
+
             if (loading) {
                 if (totalItemCount > previousTotal) {
                     loading = false;
                     previousTotal = totalItemCount;
-                    currentPage++;
                 }
             }
 
-            if (!loading && (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold)) {
-                new SendRequest().execute(currentPage + 1);
+            if (total > limit*(currentPage + 1) &&  !loading && (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold)) {
+                currentPage++;
+                createRequest().execute(currentPage);
                 loading = true;
             }
         }
@@ -86,6 +88,21 @@ public class TemplateListView<T> extends Fragment {
         @Override
         public void onScrollStateChanged(AbsListView view, int scrollState) {
         }
+    }
+
+    protected SendRequest createRequest(){
+        return new SendRequest();
+    }
+
+    protected int getTotal(){
+        switch (type){
+            case "Book":
+                return Session.totalUserBooks;
+            case "Movie":
+                return Session.totalUserMovies;
+        }
+
+        return 0;
     }
 
     class SendRequest extends AsyncTask<Integer, Void, Boolean> {
@@ -107,10 +124,10 @@ public class TemplateListView<T> extends Fragment {
 
             switch(type){
                 case "Book":
-                    newData = (T[])BookFacade.getAllByUser(Session.user._id, 10, option[0]);
+                    newData = (T[])BookFacade.getAllByUser(Session.user._id, limit, option[0]);
                     break;
                 case "Movie":
-                    newData = (T[])MovieFacade.getAllByUser(Session.user._id, 10, option[0]);
+                    newData = (T[])MovieFacade.getAllByUser(Session.user._id, limit, option[0]);
                     break;
             }
 
