@@ -90,6 +90,7 @@ class BookMongoTest(unittest.TestCase):
         self.assertEqual(len(result), limit)
 
         for i in xrange(limit):
+            user_books[i]['status'] = 0
             self.assertEqual(user_books[i], result[i])
     
         result, books_total = dbapi.books.get_all_by_user(user_id, limit, offset)
@@ -97,6 +98,7 @@ class BookMongoTest(unittest.TestCase):
         self.assertEqual(len(result), min((total - limit), limit))
 
         for i in xrange(limit*offset, min(total, offset*limit + limit)):
+            user_books[i]['status'] = 0
             self.assertEqual(user_books[i], result[i%limit])
 
         self.assertEqual(books_total, 25)

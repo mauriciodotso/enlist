@@ -39,6 +39,7 @@ class MovieMongoTest(unittest.TestCase):
             movie['_id'] = movie_id
 
             if i%2 == 0:
+#                movie['status'] = 0
                 database.users.update_one({'_id': user_id}, {'$addToSet': {'movies': {'_id': movie_id, 'status': 0}}})
                 user_movies.append(movie)
 
@@ -90,6 +91,7 @@ class MovieMongoTest(unittest.TestCase):
         self.assertEqual(len(result), limit)
 
         for i in xrange(limit):
+            user_movies[i]['status'] = 0
             self.assertEqual(user_movies[i], result[i])
 
         result, movies_total = dbapi.movies.get_all_by_user(user_id, limit, offset)
@@ -97,6 +99,7 @@ class MovieMongoTest(unittest.TestCase):
         self.assertEqual(len(result), min((total - limit), limit))
 
         for i in xrange(limit*offset, min(total, offset*limit + limit)):
+            user_movies[i]['status'] = 0
             self.assertEqual(user_movies[i], result[i%limit])
 
         self.assertEqual(movies_total, 25)
