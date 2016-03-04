@@ -694,6 +694,54 @@ def book_search():
     except Exception:
         return "Error! Maybe missing args.", 400
 
+@app.route("/book/notListed", methods=['POST', 'OPTIONS'])
+@crossdomain(origin=url)
+def book_not_listed():
+    """Get all books not listed by a specified user.
+
+    Method:
+        POST
+
+    Args:
+        username: (string): Search books in the user favorites collection.
+        limit: (Optional[int]): Limit the total books returned, default is 10.
+        page: (Optional[int]): Especifies the page of books.
+
+    Returns:
+        json: Returns an array of books, with the next and last page if any.
+            {
+                'books': []
+                'total': Total books
+                'limit': Books per page
+            }
+    Raises:
+        500: If the specified page does not exist.
+    """
+    try:
+        page = 0
+        limit = 10
+
+        if 'page' in request.json:
+            page = int(request.json['page'])
+
+        if 'limit' in request.json:
+            limit = int(request.json['limit'])
+
+        try:
+            results, total = dbapi.books.get_all_not_listed(request.json['username'], limit, page)
+
+            for result in results:
+                result['_id'] = str(result['_id'])
+
+        except Exception:
+            return jsonify(message="We had a problem processing your request! Try again later."), 500
+
+        response = {'books': results, 'limit': limit, 'total': total}
+
+        return json.dumps(response), 200
+    except Exception:
+        return "Error! Maybe missing args.", 400
+
 ###########
 #Movie API#
 ###########
@@ -863,6 +911,54 @@ def movie_search():
                 results, total = dbapi.movies.get_all_by_user(request.json['username'], limit, page)
             else:
                 results, total = dbapi.movies.get_all(limit, page)
+
+            for result in results:
+                result['_id'] = str(result['_id'])
+
+        except Exception:
+            return jsonify(message="We had a problem processing your request! Try again later."), 500
+
+        response = {'movies': results, 'limit': limit, 'total': total}
+
+        return json.dumps(response), 200
+    except Exception:
+        return "Error! Maybe missing args.", 400
+
+@app.route("/movie/notListed", methods=['POST', 'OPTIONS'])
+@crossdomain(origin=url)
+def movie_not_listed():
+    """Get all movies not listed by a specified user.
+
+    Method:
+        POST
+
+    Args:
+        username: (string): Search movies in the user favorites collection.
+        limit: (Optional[int]): Limit the total movies returned, default is 10.
+        page: (Optional[int]): Especifies the page of movies.
+
+    Returns:
+        json: Returns an array of movies, with the next and last page if any.
+            {
+                'movies': []
+                'total': Total movies
+                'limit': Movies per page
+            }
+    Raises:
+        500: If the specified page does not exist.
+    """
+    try:
+        page = 0
+        limit = 10
+
+        if 'page' in request.json:
+            page = int(request.json['page'])
+
+        if 'limit' in request.json:
+            limit = int(request.json['limit'])
+
+        try:
+            results, total = dbapi.movies.get_all_not_listed(request.json['username'], limit, page)
 
             for result in results:
                 result['_id'] = str(result['_id'])
