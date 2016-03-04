@@ -55,7 +55,7 @@ class BookMongo(BaseMongo, BookDAO):
         except Exception:
             raise Exception
 
-    def get_all_excluded_by_user(self, user_id, limit=10, offset=0):
+    def get_all_not_listed(self, user_id, limit=10, offset=0):
         try:
             books = self.database.users.find_one({'_id': user_id}, {'_id': 0, 'books._id': 1, 'books.status': 1})['books']
             books = [book['_id'] for book in books]
