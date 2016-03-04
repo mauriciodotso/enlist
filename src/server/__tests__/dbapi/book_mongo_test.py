@@ -103,5 +103,22 @@ class BookMongoTest(unittest.TestCase):
 
         self.assertEqual(books_total, 25)
 
+    def test_get_all_excluded_by_user(self):
+        result, books_total = dbapi.books.get_all_excluded_by_user(user_id, limit, 0)
+
+        self.assertEqual(len(result), limit)
+
+        for i in xrange(limit):
+            self.assertEqual(books[i*2 + 1], result[i])
+    
+        result, books_total = dbapi.books.get_all_by_user(user_id, limit, offset)
+
+        self.assertEqual(len(result), min((total - limit), limit))
+
+        for i in xrange(limit*(offset + 1), min(total, offset*limit + limit)):
+            self.assertEqual(books[i + i%10], result[i%limit])
+
+        self.assertEqual(books_total, 25)
+
 if __name__ == '__main__':
     unittest.main()

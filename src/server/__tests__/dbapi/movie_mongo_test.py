@@ -104,5 +104,22 @@ class MovieMongoTest(unittest.TestCase):
 
         self.assertEqual(movies_total, 25)
 
+    def test_get_all_excluded_by_user(self):
+        result, movies_total = dbapi.movies.get_all_excluded_by_user(user_id, limit, 0)
+
+        self.assertEqual(len(result), limit)
+
+        for i in xrange(limit):
+            self.assertEqual(movies[i*2 + 1], result[i])
+    
+        result, movies_total = dbapi.movies.get_all_by_user(user_id, limit, offset)
+
+        self.assertEqual(len(result), min((total - limit), limit))
+
+        for i in xrange(limit*(offset + 1), min(total, offset*limit + limit)):
+            self.assertEqual(movies[i + i%10], result[i%limit])
+
+        self.assertEqual(movies_total, 25)
+
 if __name__ == '__main__':
     unittest.main()
