@@ -36,6 +36,14 @@ public class MovieFacade{
         return facade.getAllByUser(username);
     }
 
+    public static Movie[] getAllNotListed(String username, int limit, int page){
+        return facade.getAllNotListed(username, limit, page);
+    }
+
+    public static Movie[] getAllNotListed(String username){
+        return facade.getAllNotListed(username);
+    }
+
     public static Movie[] searchByTitle(String title, int limit, int page){
         return facade.searchByTitle(title, limit, page);
     }

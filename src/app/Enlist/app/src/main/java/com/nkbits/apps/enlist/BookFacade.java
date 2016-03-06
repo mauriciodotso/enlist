@@ -36,6 +36,14 @@ public class BookFacade{
         return facade.getAllByUser(username);
     }
 
+    public static Book[] getAllNotListed(String username, int limit, int page){
+        return facade.getAllNotListed(username, limit, page);
+    }
+
+    public static Book[] getAllNotListed(String username){
+        return facade.getAllNotListed(username);
+    }
+
     public static Book[] searchByTitle(String title, int limit, int page){
         return facade.searchByTitle(title, limit, page);
     }

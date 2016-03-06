@@ -266,7 +266,7 @@ public abstract class BaseFacade<T extends Item> {
     }
 
 
-    protected T[] getAllByNotListed(String username){
+    protected T[] getAllNotListed(String username){
         return this.getAllNotListed(username, 10, 0);
     }
 
