@@ -117,10 +117,10 @@ public class MainActivity extends AppCompatActivity
                     data = MovieFacade.getAllByUser(Session.user._id);
                     break;
                 case R.id.nav_search_books:
-                    data = BookFacade.getAll();
+                    data = BookFacade.getAllNotListed(Session.user._id);
                     break;
                 case R.id.nav_search_movies:
-                    data = MovieFacade.getAll();
+                    data = MovieFacade.getAllNotListed(Session.user._id);
                     break;
             }
 
