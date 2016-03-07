@@ -728,7 +728,10 @@ def book_not_listed():
             limit = int(request.json['limit'])
 
         try:
-            results, total = dbapi.books.get_all_not_listed(request.json['username'], limit, page)
+            if 'title' in request.json:
+                results, total = dbapi.books.get_all_not_listed_by_title(request.json['username'], request.json['title'], limit, page)
+            else:
+                results, total = dbapi.books.get_all_not_listed(request.json['username'], limit, page)
 
             for result in results:
                 result['_id'] = str(result['_id'])
@@ -958,7 +961,10 @@ def movie_not_listed():
             limit = int(request.json['limit'])
 
         try:
-            results, total = dbapi.movies.get_all_not_listed(request.json['username'], limit, page)
+            if 'title' in request.json:
+                results, total = dbapi.movies.get_all_not_listed_by_title(request.json['username'], request.json['title'], limit, page)
+            else:
+                results, total = dbapi.movies.get_all_not_listed(request.json['username'], limit, page)
 
             for result in results:
                 result['_id'] = str(result['_id'])
