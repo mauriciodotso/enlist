@@ -112,14 +112,14 @@ public class SearchListView<T> extends TemplateListView {
                     if(Objects.equals(input, "")){
                         newData = (T[]) BookFacade.getAllNotListed(Session.user._id,limit, option[0]);
                     }else {
-                        newData = (T[]) BookFacade.searchByTitle(input, limit, option[0]);
+                        newData = (T[]) BookFacade.searchNotListedByTitle(Session.user._id, input, limit, option[0]);
                     }
                     break;
                 case "Movie":
                     if(Objects.equals(input, "")) {
                         newData = (T[]) MovieFacade.getAllNotListed(Session.user._id, limit, option[0]);
                     }else{
-                        newData = (T[]) MovieFacade.searchByTitle(input, limit, option[0]);
+                        newData = (T[]) MovieFacade.searchNotListedByTitle(Session.user._id, input, limit, option[0]);
                     }
                     break;
             }

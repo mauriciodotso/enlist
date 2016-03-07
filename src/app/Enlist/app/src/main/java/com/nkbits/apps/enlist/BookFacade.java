@@ -51,6 +51,14 @@ public class BookFacade{
     public static Book[] searchByTitle(String title){
         return facade.searchByTitle(title);
     }
+
+    public static Book[] searchNotListedByTitle(String username, String title, int limit, int page){
+        return facade.searchNotListedByTitle(username, title, limit, page);
+    }
+
+    public static Book[] searchNotListedByTitle(String username, String title){
+        return facade.searchNotListedByTitle(username, title);
+    }
 }
 
 class BookFacadeExtend extends BaseFacade<Book>{

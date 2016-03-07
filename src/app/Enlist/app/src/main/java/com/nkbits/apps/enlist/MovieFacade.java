@@ -51,6 +51,14 @@ public class MovieFacade{
     public static Movie[] searchByTitle(String title){
         return facade.searchByTitle(title);
     }
+
+    public static Movie[] searchNotListedByTitle(String username, String title, int limit, int page){
+        return facade.searchNotListedByTitle(username, title, limit, page);
+    }
+
+    public static Movie[] searchNotListedByTitle(String username, String title){
+        return facade.searchNotListedByTitle(username, title);
+    }
 }
 
 class MovieFacadeExtend extends BaseFacade<Movie>{
