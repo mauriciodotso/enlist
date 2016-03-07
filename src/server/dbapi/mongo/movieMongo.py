@@ -61,7 +61,23 @@ class MovieMongo(BaseMongo, MovieDAO):
             movies = [movie['_id'] for movie in movies]
 
             cursor = self.table.find({'_id': {'$nin': movies}}).sort('title', pymongo.ASCENDING).limit(limit).skip(offset*limit)
-            total = len(movies)
+            total = self.table.find({'_id': {'$nin': movies}}).count()
+            result = []
+
+            for movie in cursor:
+                result.append(movie)
+
+            return result, total
+        except Exception:
+            raise Exception
+
+    def get_all_not_listed_by_title(self, title, user_id, limit=10, offset=0):
+        try:
+            movies = self.database.users.find_one({'_id': user_id}, {'_id': 0, 'movies._id': 1, 'movies.status': 1})['movies']
+            movies = [movie['_id'] for movie in movies]
+
+            cursor = self.table.find({'_id': {'$nin': movies}, 'title': {'$regex': title}}).sort('title', pymongo.ASCENDING).limit(limit).skip(offset*limit)
+            total = self.table.find({'_id': {'$nin': movies}, 'title': {'$regex': title}}).count()
             result = []
 
             for movie in cursor:
