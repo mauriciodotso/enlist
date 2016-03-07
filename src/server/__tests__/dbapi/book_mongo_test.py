@@ -113,12 +113,28 @@ class BookMongoTest(unittest.TestCase):
     
         result, books_total = dbapi.books.get_all_not_listed(user_id, limit, offset)
 
-        self.assertEqual(len(result), min((total - limit), limit))
+        self.assertEqual(len(result), min((books_total - limit), limit))
 
-        for i in xrange(limit*(offset + 1), min(total, offset*limit + limit)):
+        for i in xrange(limit*(offset + 1), min(offset*limit + limit, offset*limit + (books_total - limit))):
             self.assertEqual(books[i + i%10], result[i%limit])
 
         self.assertEqual(books_total, 25)
+
+    def test_get_all_not_listed_by_title(self):
+        result, books_total = dbapi.books.get_all_not_listed_by_title('Book19', user_id, limit, 0)
+        self.assertEqual(len(result), limit)
+
+        for i in xrange(limit):
+            self.assertEqual(books[i*2 + 1], result[i])
+    
+        result, books_total = dbapi.books.get_all_not_listed_by_title('Book19', user_id, limit, offset)
+
+        self.assertEqual(len(result), min((books_total - limit), limit))
+
+        for i in xrange(limit*offset, min(offset*limit + limit, offset*limit + (books_total - limit))):
+            self.assertEqual(books[i + 11 + i%10], result[i%limit])
+
+        self.assertEqual(books_total, 12)
 
 if __name__ == '__main__':
     unittest.main()

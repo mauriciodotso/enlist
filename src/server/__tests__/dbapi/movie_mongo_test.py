@@ -121,5 +121,21 @@ class MovieMongoTest(unittest.TestCase):
 
         self.assertEqual(movies_total, 25)
 
+    def test_get_all_not_listed_by_title(self):
+        result, mvoies_total = dbapi.movies.get_all_not_listed_by_title('Movie19', user_id, limit, 0)
+        self.assertEqual(len(result), limit)
+
+        for i in xrange(limit):
+            self.assertEqual(movies[i*2 + 1], result[i])
+    
+        result, movies_total = dbapi.movies.get_all_not_listed_by_title('Movie19', user_id, limit, offset)
+
+        self.assertEqual(len(result), min((movies_total - limit), limit))
+
+        for i in xrange(limit*offset, min(offset*limit + limit, offset*limit + (movies_total - limit))):
+            self.assertEqual(movies[i + 11 + i%10], result[i%limit])
+
+        self.assertEqual(movies_total, 12)
+
 if __name__ == '__main__':
     unittest.main()
