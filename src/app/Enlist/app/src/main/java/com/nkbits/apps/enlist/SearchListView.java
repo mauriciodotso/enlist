@@ -1,6 +1,7 @@
 package com.nkbits.apps.enlist;
 
 import android.app.ProgressDialog;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -54,7 +55,7 @@ public class SearchListView<T> extends TemplateListView {
 
                 if(!Objects.equals(previousInput, input)) {
                     adapter.clear();
-
+                    currentPage = 0;
                     createRequest().execute(0);
                 }
             }
@@ -71,7 +72,7 @@ public class SearchListView<T> extends TemplateListView {
     }
 
     @Override
-    protected SendRequest createRequest(){
+    protected TemplateListView.SendRequest createRequest(){
         return new SendRequest();
     }
 
@@ -87,59 +88,64 @@ public class SearchListView<T> extends TemplateListView {
         return 0;
     }
 
-    class SendRequest extends TemplateListView.SendRequest{
-        ProgressDialog progressDialog = new ProgressDialog(getActivity());
-
-        @Override
-        protected void onPreExecute(){
-            super.onPreExecute();
-
-            if(!Objects.equals(input, "")) {
-                progressDialog.setMessage("Loading...");
-                progressDialog.setIndeterminate(false);
-                progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                progressDialog.setCancelable(true);
-                progressDialog.show();
-            }
+    class SendRequest extends TemplateListView.SendRequest {
+        public void execute(Integer ... params){
+            new BackgroundThread().execute(params);
         }
 
-        @Override
-        protected Boolean doInBackground(Integer... option) {
-            T[] newData = null;
+        private class BackgroundThread extends AsyncTask<Integer, Void, Boolean> {
+            ProgressDialog progressDialog = new ProgressDialog(getActivity());
 
-            switch(type){
-                case "Book":
-                    if(Objects.equals(input, "")){
-                        newData = (T[]) BookFacade.getAllNotListed(Session.user._id,limit, option[0]);
-                    }else {
-                        newData = (T[]) BookFacade.searchNotListedByTitle(Session.user._id, input, limit, option[0]);
-                    }
-                    break;
-                case "Movie":
-                    if(Objects.equals(input, "")) {
-                        newData = (T[]) MovieFacade.getAllNotListed(Session.user._id, limit, option[0]);
-                    }else{
-                        newData = (T[]) MovieFacade.searchNotListedByTitle(Session.user._id, input, limit, option[0]);
-                    }
-                    break;
-            }
-
-            if(newData != null) {
-                for(T item : newData){
-                    data.add(item);
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                if (!Objects.equals(input, "")) {
+                    progressDialog.setMessage("Loading...");
+                    progressDialog.setIndeterminate(false);
+                    progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                    progressDialog.setCancelable(true);
+                    progressDialog.show();
                 }
             }
 
-            return true;
-        }
+            @Override
+            protected Boolean doInBackground(Integer... option) {
+                T[] newData = null;
 
-        @Override
-        protected void onPostExecute(Boolean success){
-            super.onPostExecute(success);
-            if(!Objects.equals(input, "")) {
-                progressDialog.dismiss();
+                switch (type) {
+                    case "Book":
+                        if (Objects.equals(input, "")) {
+                            newData = (T[]) BookFacade.getAllNotListed(Session.user._id, limit, option[0]);
+                        } else {
+                            newData = (T[]) BookFacade.searchNotListedByTitle(Session.user._id, input, limit, option[0]);
+                        }
+                        break;
+                    case "Movie":
+                        if (Objects.equals(input, "")) {
+                            newData = (T[]) MovieFacade.getAllNotListed(Session.user._id, limit, option[0]);
+                        } else {
+                            newData = (T[]) MovieFacade.searchNotListedByTitle(Session.user._id, input, limit, option[0]);
+                        }
+                        break;
+                }
+
+                if (newData != null) {
+                    for (T item : newData) {
+                        data.add(item);
+                    }
+                }
+
+                return true;
             }
-            adapter.update(data);
+
+            @Override
+            protected void onPostExecute(Boolean success) {
+                super.onPostExecute(success);
+                if (!Objects.equals(input, "")) {
+                    progressDialog.dismiss();
+                }
+                adapter.update(data);
+            }
         }
     }
 }

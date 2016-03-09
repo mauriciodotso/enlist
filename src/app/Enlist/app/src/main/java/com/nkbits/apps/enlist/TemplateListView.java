@@ -25,6 +25,7 @@ public class TemplateListView<T> extends Fragment {
     protected ListViewAdapter<T> adapter;
     protected String type;
     protected int limit = 10;
+    protected int currentPage = 0;
 
     public static final String DATA = "data";
     public static final String VIEW = "view";
@@ -57,7 +58,6 @@ public class TemplateListView<T> extends Fragment {
 
     protected class EndlessScrollListener implements AbsListView.OnScrollListener {
         private int visibleThreshold = 5;
-        private int currentPage = 0;
         private int previousTotal = 0;
         private boolean loading = true;
 
@@ -105,44 +105,50 @@ public class TemplateListView<T> extends Fragment {
         return 0;
     }
 
-    class SendRequest extends AsyncTask<Integer, Void, Boolean> {
-        ProgressDialog progressDialog = new ProgressDialog(getActivity());
-
-        @Override
-        protected void onPreExecute(){
-            super.onPreExecute();
-            progressDialog.setMessage("Loading...");
-            progressDialog.setIndeterminate(false);
-            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            progressDialog.setCancelable(true);
-            progressDialog.show();
+    class SendRequest{
+        public void execute(Integer ... params){
+            new BackgroundThread().execute(params);
         }
 
-        @Override
-        protected Boolean doInBackground(Integer... option) {
-            T[] newData = null;
+        private class BackgroundThread extends AsyncTask<Integer, Void, Boolean> {
+            ProgressDialog progressDialog = new ProgressDialog(getActivity());
 
-            switch(type){
-                case "Book":
-                    newData = (T[])BookFacade.getAllByUser(Session.user._id, limit, option[0]);
-                    break;
-                case "Movie":
-                    newData = (T[])MovieFacade.getAllByUser(Session.user._id, limit, option[0]);
-                    break;
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                progressDialog.setMessage("Loading...");
+                progressDialog.setIndeterminate(false);
+                progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                progressDialog.setCancelable(true);
+                progressDialog.show();
             }
 
-            if(newData != null) {
-                Collections.addAll(data, newData);
+            @Override
+            protected Boolean doInBackground(Integer... option) {
+                T[] newData = null;
+
+                switch (type) {
+                    case "Book":
+                        newData = (T[]) BookFacade.getAllByUser(Session.user._id, limit, option[0]);
+                        break;
+                    case "Movie":
+                        newData = (T[]) MovieFacade.getAllByUser(Session.user._id, limit, option[0]);
+                        break;
+                }
+
+                if (newData != null) {
+                    Collections.addAll(data, newData);
+                }
+
+                return true;
             }
 
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean success){
-            super.onPostExecute(success);
-            progressDialog.dismiss();
-            adapter.update(data);
+            @Override
+            protected void onPostExecute(Boolean success) {
+                super.onPostExecute(success);
+                progressDialog.dismiss();
+                adapter.update(data);
+            }
         }
     }
 }
