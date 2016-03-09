@@ -24,6 +24,7 @@ public class ListViewAdapter<T> extends ArrayAdapter<T>{
     int layoutResourceId;
     ArrayList<T> data = null;
     View view;
+    int lastClickedPosition;
 
     public ListViewAdapter(Context context, int layoutResourceId, ArrayList<T> data) {
         super(context, layoutResourceId, data);
@@ -33,7 +34,7 @@ public class ListViewAdapter<T> extends ArrayAdapter<T>{
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         if(convertView == null)
         {
             LayoutInflater inflater = ((Activity)context).getLayoutInflater();
@@ -68,6 +69,7 @@ public class ListViewAdapter<T> extends ArrayAdapter<T>{
                 actionButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        lastClickedPosition = position;
                         SendRequest request = new SendRequest();
                         request.execute("Book", book._id, action);
                     }
@@ -91,6 +93,7 @@ public class ListViewAdapter<T> extends ArrayAdapter<T>{
                 actionButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        lastClickedPosition = position;
                         SendRequest request = new SendRequest();
                         request.execute("Movie", movie._id, action);
                     }
@@ -112,6 +115,7 @@ public class ListViewAdapter<T> extends ArrayAdapter<T>{
 
     class SendRequest extends AsyncTask<String, Void, Boolean> {
         ProgressDialog progressDialog = new ProgressDialog(context);
+        int status = 0;
 
         @Override
         protected void onPreExecute(){
@@ -129,8 +133,10 @@ public class ListViewAdapter<T> extends ArrayAdapter<T>{
                 case "Book":
                     if(Objects.equals(option[2], "add")) {
                         UserFacade.addBook(Session.user._id, option[1], Session.user.token);
+                        status = -1;
                     }else if(Objects.equals(option[2], "markRead")){
                         UserFacade.updateBook(Session.user._id, option[1], Session.user.token, 1);
+                        status = 1;
                     }else if(Objects.equals(option[2], "markUnread")){
                         UserFacade.updateBook(Session.user._id, option[1], Session.user.token, 0);
                     }
@@ -138,8 +144,10 @@ public class ListViewAdapter<T> extends ArrayAdapter<T>{
                 case "Movie":
                     if(Objects.equals(option[2], "add")) {
                         UserFacade.addMovie(Session.user._id, option[1], Session.user.token);
+                        status = -1;
                     }else if(Objects.equals(option[2], "markSeen")){
                         UserFacade.updateMovie(Session.user._id, option[1], Session.user.token, 1);
+                        status = 1;
                     }else if(Objects.equals(option[2], "markUnseen")){
                         UserFacade.updateMovie(Session.user._id, option[1], Session.user.token, 0);
                     }
@@ -155,6 +163,20 @@ public class ListViewAdapter<T> extends ArrayAdapter<T>{
             progressDialog.dismiss();
 
             if(success){
+                if(status == -1){
+                    data.remove(lastClickedPosition);
+                }else {
+                    switch (layoutResourceId) {
+                        case R.layout.book_view:
+                            ((Book) (data.get(lastClickedPosition))).status = status;
+                            break;
+                        case R.layout.movie_view:
+                            ((Movie) (data.get(lastClickedPosition))).status = status;
+                            break;
+                    }
+                }
+
+                notifyDataSetChanged();
                 //ToDo: Update View
             }else {
                 //ToDo: Display Error Message
