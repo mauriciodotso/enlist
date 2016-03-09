@@ -23,7 +23,6 @@ public class ListViewAdapter<T> extends ArrayAdapter<T>{
     Context context;
     int layoutResourceId;
     ArrayList<T> data = null;
-    String dataId;
     View view;
 
     public ListViewAdapter(Context context, int layoutResourceId, ArrayList<T> data) {
@@ -55,7 +54,6 @@ public class ListViewAdapter<T> extends ArrayAdapter<T>{
                 titleText.setText(book.title);
                 yearText.setText(Integer.toString(book.year));
                 editionText.setText(Integer.toString(book.edition));
-                this.dataId = book._id;
 
                 if(book.status == 0){
                     actionButton.setText("Read");
@@ -79,11 +77,10 @@ public class ListViewAdapter<T> extends ArrayAdapter<T>{
                 final Movie movie = (Movie)getItem(position);
                 titleText.setText(movie.title);
                 yearText.setText(Integer.toString(movie.year));
-                this.dataId = movie._id;
 
                 if(movie.status == 0){
                     actionButton.setText("Viewed");
-                    action = "markViewed";
+                    action = "markSeen";
                 }else if(movie.status == 1){
                     actionButton.setText("Unmark");
                     action = "markUnseen";
