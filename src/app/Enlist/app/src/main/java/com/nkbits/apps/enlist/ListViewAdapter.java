@@ -59,11 +59,10 @@ public class ListViewAdapter<T> extends ArrayAdapter<T>{
 
                 if(book.status == 0){
                     actionButton.setText("Read");
-                    actionButton.setVisibility(View.VISIBLE);
-                    action = "update";
+                    action = "markRead";
                 }else if(book.status == 1){
-                    actionButton.setVisibility(View.GONE);
-                    action = "nothing";
+                    actionButton.setText("Unread");
+                    action = "markUnread";
                 }else{
                     action = "add";
                 }
@@ -84,10 +83,10 @@ public class ListViewAdapter<T> extends ArrayAdapter<T>{
 
                 if(movie.status == 0){
                     actionButton.setText("Viewed");
-                    action = "update";
+                    action = "markViewed";
                 }else if(movie.status == 1){
-                    actionButton.setVisibility(View.GONE);
-                    action = "nothing";
+                    actionButton.setText("Unmark");
+                    action = "markUnseen";
                 }else{
                     action = "add";
                 }
@@ -133,15 +132,19 @@ public class ListViewAdapter<T> extends ArrayAdapter<T>{
                 case "Book":
                     if(Objects.equals(option[2], "add")) {
                         UserFacade.addBook(Session.user._id, option[1], Session.user.token);
-                    }else{
+                    }else if(Objects.equals(option[2], "markRead")){
                         UserFacade.updateBook(Session.user._id, option[1], Session.user.token, 1);
+                    }else if(Objects.equals(option[2], "markUnread")){
+                        UserFacade.updateBook(Session.user._id, option[1], Session.user.token, 0);
                     }
                     break;
                 case "Movie":
                     if(Objects.equals(option[2], "add")) {
                         UserFacade.addMovie(Session.user._id, option[1], Session.user.token);
-                    }else{
+                    }else if(Objects.equals(option[2], "markSeen")){
                         UserFacade.updateMovie(Session.user._id, option[1], Session.user.token, 1);
+                    }else if(Objects.equals(option[2], "markUnseen")){
+                        UserFacade.updateMovie(Session.user._id, option[1], Session.user.token, 0);
                     }
                     break;
             }
@@ -154,19 +157,11 @@ public class ListViewAdapter<T> extends ArrayAdapter<T>{
             super.onPostExecute(success);
             progressDialog.dismiss();
 
-//            if(success){
-//                if(status == 0) {
-////                    Snackbar.make(view.findViewById(R.id.list_view), "Item added to your list!", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-//                }else{
-////                    Snackbar.make(view.findViewById(R.id.list_view), "Item updated!", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-//                }
-//            }else {
-//                if(status == 0) {
-////                    Snackbar.make(view.findViewById(R.id.list_view), "Failed to add to your list!", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-//                }else {
-////                    Snackbar.make(view.findViewById(R.id.list_view), "Failed to update!", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-//                }
-//            }
+            if(success){
+                //ToDo: Update View
+            }else {
+                //ToDo: Display Error Message
+            }
         }
     }
 }

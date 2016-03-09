@@ -13,7 +13,7 @@ import cz.msebera.android.httpclient.protocol.HTTP;
  * Created by nakayama on 1/23/16.
  */
 public class HTTPRequest {
-    private static String BASE_URL = "http://192.168.25.58:5000/";
+    private static String BASE_URL = "http://192.168.25.67:5000/";
 
     public static void setBaseUrl(String url){
         BASE_URL = url;

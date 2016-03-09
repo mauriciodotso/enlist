@@ -12,7 +12,7 @@ import hashlib
 
 app = Flask(__name__)
 
-host="192.168.25.58"
+host="192.168.25.67"
 url = "*"
 dbapi = DBAPI()
 
@@ -979,4 +979,4 @@ def movie_not_listed():
         return "Error! Maybe missing args.", 400
 
 if __name__ == "__main__":
-    app.run(host=host)
+    app.run(host=host, port=5000)
