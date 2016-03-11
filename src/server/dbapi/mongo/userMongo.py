@@ -18,6 +18,18 @@ class UserMongo(BaseMongo, UserDAO):
         except Exception:
             raise Exception
 
+    def remove_movie(self, user_id, movie_id):
+        try:
+            return self.table.update({'_id': user_id, 'movies._id':  movie_id}, {'$pull': {'movies': {'_id': movie_id}}})
+        except Exception:
+            raise Exception
+
+    def remove_book(self, user_id, book_id):
+        try:
+            return self.table.update({'_id': user_id, 'books._id': book_id}, {'$pull': {'books': {'_id': book_id}}})
+        except Exception:
+            raise Exception
+
     def update_movie(self, user_id, movie_id, status):
         try:
             return self.table.update({'_id': user_id, 'movies._id': movie_id}, {'$set': {'movies.$.status': status}})
