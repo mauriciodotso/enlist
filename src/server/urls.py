@@ -366,10 +366,48 @@ def user_add_book():
     except Exception:
         return jsonify(message="Error! Maybe missing args."), 400
 
-@app.route("/user/deletebook", methods=['POST', 'OPTIONS'])
+@app.route("/user/book/<book_id>", methods=['DELETE', 'OPTIONS'])
 @crossdomain(origin=url)
 def user_delete_book():
-    pass
+    """Delete book from user list.
+
+    Method:
+        DELETE
+
+    Args:
+        username (str): User's username
+        token (str): User's session token
+
+    Returns:
+        200: If User's info were updated
+
+    Raises:
+        403: If a invalid token is passed, or no token is passed, or invalid permission.
+        404: If the specified Id does not exist.
+        400: If the user was not updated.
+        """
+    try:
+        user = dbapi.users.get(request.json['username'])
+
+        if not user:
+            return jsonify(message="Couldn't find the specified user!"), 404
+
+        if not has_permission(request.json['token'], request.json['username']):
+            return jsonify(message="Access Denied"), 403
+
+        book = dbapi.books.get(ObjectId(book_id))
+
+        if not book:
+            return jsonify(message="Couldn't find the specified book!"), 404
+
+        try:
+            dbapi.users.delete_book(request.json['username'], ObjectId(book_id))
+        except Exception:
+            return jsonify(message="We had a problem processing your request! Try again later."), 500
+
+        return  jsonify(message="Success! Book deleted."), 200
+    except Exception:
+        return jsonify(message="Error! Maybe missing args."), 400
 
 @app.route("/user/updatebook", methods=['POST', 'OPTIONS'])
 @crossdomain(origin=url)
@@ -460,9 +498,48 @@ def user_add_movie():
     except Exception:
         return jsonify(message="Error! Maybe missing args."), 400
 
-@app.route("/user/deletemovie", methods=['POST', 'OPTIONS'])
+@app.route("/user/movie/<movie_id>", methods=['POST', 'OPTIONS'])
 @crossdomain(origin=url)
 def user_delete_movie():
+    """Delete movie from user list.
+
+    Method:
+        DELETE
+
+    Args:
+        username (str): User's username
+        token (str): User's session token
+
+    Returns:
+        200: If User's info were updated
+
+    Raises:
+        403: If a invalid token is passed, or no token is passed, or invalid permission.
+        404: If the specified Id does not exist.
+        400: If the user was not updated.
+        """
+    try:
+        user = dbapi.users.get(request.json['username'])
+
+        if not user:
+            return jsonify(message="Couldn't find the specified user!"), 404
+
+        if not has_permission(request.json['token'], request.json['username']):
+            return jsonify(message="Access Denied"), 403
+
+        movie = dbapi.movies.get(ObjectId(movie_id))
+
+        if not movie:
+            return jsonify(message="Couldn't find the specified movie!"), 404
+
+        try:
+            dbapi.users.delete_movie(request.json['username'], ObjectId(movie_id))
+        except Exception:
+            return jsonify(message="We had a problem processing your request! Try again later."), 500
+
+        return  jsonify(message="Success! Movie deleted."), 200
+    except Exception:
+        return jsonify(message="Error! Maybe missing args."), 400
     pass
 
 @app.route("/user/updatemovie", methods=['POST', 'OPTIONS'])
