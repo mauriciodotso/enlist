@@ -366,7 +366,7 @@ def user_add_book():
     except Exception:
         return jsonify(message="Error! Maybe missing args."), 400
 
-@app.route("/user/book/<book_id>", methods=['DELETE', 'OPTIONS'])
+@app.route("/user/deletebook", methods=['POST', 'OPTIONS'])
 @crossdomain(origin=url)
 def user_delete_book():
     """Delete book from user list.
@@ -388,6 +388,7 @@ def user_delete_book():
         """
     try:
         user = dbapi.users.get(request.json['username'])
+        book_id = request.json('book_id')
 
         if not user:
             return jsonify(message="Couldn't find the specified user!"), 404
@@ -498,7 +499,7 @@ def user_add_movie():
     except Exception:
         return jsonify(message="Error! Maybe missing args."), 400
 
-@app.route("/user/movie/<movie_id>", methods=['POST', 'OPTIONS'])
+@app.route("/user/deletemovie", methods=['POST', 'OPTIONS'])
 @crossdomain(origin=url)
 def user_delete_movie():
     """Delete movie from user list.
@@ -520,6 +521,7 @@ def user_delete_movie():
         """
     try:
         user = dbapi.users.get(request.json['username'])
+        movie_id = request.json('movie_id')
 
         if not user:
             return jsonify(message="Couldn't find the specified user!"), 404
