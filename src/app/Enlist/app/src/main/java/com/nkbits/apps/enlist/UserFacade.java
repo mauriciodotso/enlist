@@ -54,6 +54,15 @@ public class UserFacade {
         return _post(url + "addbook", params, 200);
     }
 
+    public static boolean removeBook(String username, String book_id, String token){
+        RequestParams params = new RequestParams();
+        params.put("username", username);
+        params.put("book_id", book_id);
+        params.put("token", token);
+
+        return _post(url + "deletebook", params, 200);
+    }
+
     public static boolean updateBook(String username, String book_id, String token, int status){
         RequestParams params = new RequestParams();
         params.put("username", username);
@@ -71,6 +80,15 @@ public class UserFacade {
         params.put("token", token);
 
         return _post(url + "addmovie", params, 200);
+    }
+
+    public static boolean deleteMovie(String username, String movie_id, String token){
+        RequestParams params = new RequestParams();
+        params.put("username", username);
+        params.put("movie_id", movie_id);
+        params.put("token", token);
+
+        return _post(url + "deletemovie", params, 200);
     }
 
     public static boolean updateMovie(String username, String movie_id, String token, int status){
