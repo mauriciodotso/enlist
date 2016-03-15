@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +12,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -46,6 +44,7 @@ public class ListViewAdapter<T> extends ArrayAdapter<T>{
         TextView titleText = (TextView) convertView.findViewById(R.id.title_text);
         TextView yearText = (TextView) convertView.findViewById(R.id.year_text);
         Button actionButton = (Button) convertView.findViewById(R.id.action_button);
+        Button deleteButton = (Button) convertView.findViewById(R.id.delete_button);
         final String action;
 
         switch (layoutResourceId){
@@ -64,6 +63,7 @@ public class ListViewAdapter<T> extends ArrayAdapter<T>{
                     action = "markUnread";
                 }else{
                     action = "add";
+                    deleteButton.setVisibility(View.GONE);
                 }
 
                 actionButton.setOnClickListener(new View.OnClickListener() {
@@ -88,6 +88,7 @@ public class ListViewAdapter<T> extends ArrayAdapter<T>{
                     action = "markUnseen";
                 }else{
                     action = "add";
+                    deleteButton.setVisibility(View.GONE);
                 }
 
                 actionButton.setOnClickListener(new View.OnClickListener() {
