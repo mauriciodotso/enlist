@@ -92,6 +92,15 @@
             android:layout_gravity="end"
             android:layout_alignParentBottom="true"
             android:layout_alignEnd="@+id/linearLayout2"/>
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Remove"
+            android:id="@+id/remove_button"
+            android:layout_alignParentBottom="true"
+            android:layout_toStartOf="@+id/action_button"/>
     </RelativeLayout>
 
 </LinearLayout>
