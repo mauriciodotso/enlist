@@ -54,7 +54,7 @@ public class UserFacade {
         return _post(url + "addbook", params, 200);
     }
 
-    public static boolean removeBook(String username, String book_id, String token){
+    public static boolean deleteBook(String username, String book_id, String token){
         RequestParams params = new RequestParams();
         params.put("username", username);
         params.put("book_id", book_id);
