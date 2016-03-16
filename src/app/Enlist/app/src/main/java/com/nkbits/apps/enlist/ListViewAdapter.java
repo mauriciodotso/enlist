@@ -74,6 +74,15 @@ public class ListViewAdapter<T> extends ArrayAdapter<T>{
                         request.execute("Book", book._id, action);
                     }
                 });
+
+                deleteButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        lastClickedPosition = position;
+                        SendRequest request = new SendRequest();
+                        request.execute("Book", book._id, "delete");
+                    }
+                });
                 break;
             case R.layout.movie_view:
                 final Movie movie = (Movie)getItem(position);
@@ -97,6 +106,15 @@ public class ListViewAdapter<T> extends ArrayAdapter<T>{
                         lastClickedPosition = position;
                         SendRequest request = new SendRequest();
                         request.execute("Movie", movie._id, action);
+                    }
+                });
+
+                deleteButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        lastClickedPosition = position;
+                        SendRequest request = new SendRequest();
+                        request.execute("Movie", movie._id, "delete");
                     }
                 });
                 break;
@@ -140,6 +158,8 @@ public class ListViewAdapter<T> extends ArrayAdapter<T>{
                         status = 1;
                     }else if(Objects.equals(option[2], "markUnread")){
                         UserFacade.updateBook(Session.user._id, option[1], Session.user.token, 0);
+                    }else if(Objects.equals(option[2], "delete")){
+                        UserFacade.deleteBook(Session.user._id, option[1], Session.user.token);
                     }
                     break;
                 case "Movie":
@@ -151,6 +171,8 @@ public class ListViewAdapter<T> extends ArrayAdapter<T>{
                         status = 1;
                     }else if(Objects.equals(option[2], "markUnseen")){
                         UserFacade.updateMovie(Session.user._id, option[1], Session.user.token, 0);
+                    }else if(Objects.equals(option[2], "delete")){
+                        UserFacade.deleteMovie(Session.user._id, option[1], Session.user.token);
                     }
                     break;
             }
